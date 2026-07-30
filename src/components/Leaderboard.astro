@@ -1,14 +1,18 @@
 ---
+interface Props {
+	apiUrl?: string;
+}
+const { apiUrl = '/api/accounts' } = Astro.props;
 ---
 
-<section class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-6">
+<section class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-6" id="leaderboard-section" data-api-url={apiUrl}>
 	
-	<!-- Top Navigation Filters Bar (Matched to SoloQ Challenge) -->
+	<!-- Barra Superior de Filtros de Navegación -->
 	<div class="flex flex-col lg:flex-row items-center justify-between gap-4 mb-6 bg-[#0e1017] p-3 rounded-2xl border border-slate-800/80">
 		
-		<!-- Left Category Tabs & Search -->
+		<!-- Pestañas de Categoría y Búsqueda -->
 		<div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-			<!-- High/Low Elo Tabs -->
+			<!-- Pestañas High/Low Elo -->
 			<div class="flex items-center bg-[#151822] p-1 rounded-xl border border-slate-800">
 				<button id="tab-todos" class="px-3.5 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all">
 					TODOS
@@ -21,7 +25,7 @@
 				</button>
 			</div>
 
-			<!-- Search Bar -->
+			<!-- Barra de Búsqueda -->
 			<div class="relative flex-1 sm:w-60">
 				<input 
 					type="text" 
@@ -34,45 +38,54 @@
 				</svg>
 			</div>
 
-			<!-- Quick Status Filters -->
+			<!-- Filtros de Estado Rápidos -->
 			<button id="filter-live" class="px-3 py-1.5 rounded-xl bg-[#151822] border border-slate-800 text-xs font-bold text-slate-300 hover:text-emerald-400 flex items-center gap-1.5">
 				<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
 				LIVE
 			</button>
 		</div>
 
-		<!-- Right Role Icons Filter Bar -->
+		<!-- Barra de Filtros de Roles -->
 		<div class="flex items-center gap-2 w-full lg:w-auto justify-between lg:justify-end">
 			<div class="flex items-center gap-1 bg-[#151822] p-1 rounded-xl border border-slate-800" id="role-buttons-container">
 				<button data-role="all" class="role-btn px-3 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all">
 					TODOS
 				</button>
-				<button data-role="TOP" class="role-btn p-2 rounded-lg text-slate-400 hover:text-yellow-400 transition-all" title="TOP">
-					<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+				<button data-role="TOP" class="role-btn p-2 rounded-lg transition-all" title="TOP">
+					<img src="/roles/top.webp" class="w-5 h-5 opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Top" />
 				</button>
-				<button data-role="JG" class="role-btn p-2 rounded-lg text-slate-400 hover:text-yellow-400 transition-all" title="JUNGLE">
-					<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z"/><circle cx="12" cy="12" r="3"/></svg>
+				<button data-role="JG" class="role-btn p-2 rounded-lg transition-all" title="JUNGLE">
+					<img src="/roles/jungla.webp" class="w-5 h-5 opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Jungla" />
 				</button>
-				<button data-role="MID" class="role-btn p-2 rounded-lg text-slate-400 hover:text-yellow-400 transition-all" title="MID">
-					<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l9 4-9 4-9-4 9-4zm0 8l9 4-9 4-9-4 9-4zm0 8l9 4-9 4-9-4 9-4z"/></svg>
+				<button data-role="MID" class="role-btn p-2 rounded-lg transition-all" title="MID">
+					<img src="/roles/mid.webp" class="w-5 h-5 opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Mid" />
 				</button>
-				<button data-role="ADC" class="role-btn p-2 rounded-lg text-slate-400 hover:text-yellow-400 transition-all" title="ADC">
-					<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12"/></svg>
+				<button data-role="ADC" class="role-btn p-2 rounded-lg transition-all" title="ADC">
+					<img src="/roles/adc.webp" class="w-5 h-5 opacity-50 hover:opacity-100 transition-all filter-role-img" alt="ADC" />
 				</button>
-				<button data-role="SUP" class="role-btn p-2 rounded-lg text-slate-400 hover:text-yellow-400 transition-all" title="SUPPORT">
-					<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+				<button data-role="SUP" class="role-btn p-2 rounded-lg transition-all" title="SUP">
+					<img src="/roles/soporte.webp" class="w-5 h-5 opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Soporte" />
 				</button>
 			</div>
 
-			<!-- Add Account Button -->
-			<button id="open-add-modal-btn" class="flex items-center gap-1.5 bg-[#E9FF1F] text-slate-950 font-black text-xs px-4 py-2 rounded-xl hover:brightness-110 transition-all shadow-md shadow-yellow-500/10 shrink-0">
-				<span class="text-sm">+</span>
-				<span>Agregar Cuenta</span>
-			</button>
+			<!-- Botones de Acción -->
+			<div class="flex items-center gap-2 shrink-0">
+				<input type="file" id="import-file" accept=".json" class="hidden" />
+				<button id="export-btn" class="p-2.5 rounded-xl bg-[#151822] text-slate-400 border border-slate-800 hover:text-[#E9FF1F] hover:border-[#E9FF1F]/50 hover:bg-[#E9FF1F]/10 transition-all" title="Exportar Cuentas">
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+				</button>
+				<button id="import-btn" class="p-2.5 rounded-xl bg-[#151822] text-slate-400 border border-slate-800 hover:text-[#E9FF1F] hover:border-[#E9FF1F]/50 hover:bg-[#E9FF1F]/10 transition-all" title="Importar Cuentas">
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+				</button>
+				<button id="open-add-modal-btn" class="flex items-center gap-1.5 bg-[#E9FF1F] text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl hover:brightness-110 transition-all shadow-md shadow-yellow-500/10">
+					<span class="text-sm">+</span>
+					<span>Agregar Cuenta</span>
+				</button>
+			</div>
 		</div>
 	</div>
 
-	<!-- Leaderboard Table Container (Replica SoloQ Challenge) -->
+	<!-- Contenedor de la Tabla de Clasificación -->
 	<div class="bg-[#0b0c10] border border-slate-800/80 rounded-2xl overflow-hidden shadow-2xl">
 		<div class="overflow-x-auto">
 			<table class="w-full text-left border-collapse min-w-[700px]">
@@ -90,7 +103,7 @@
 					</tr>
 				</thead>
 				<tbody id="leaderboard-table-body" class="divide-y divide-slate-800/40 text-xs font-sans">
-					<!-- Rows dynamically populated -->
+					<!-- Las filas se llenan dinámicamente -->
 				</tbody>
 			</table>
 		</div>
@@ -98,7 +111,7 @@
 
 </section>
 
-<!-- MODAL: ADD ACCOUNT -->
+<!-- MODAL: AGREGAR CUENTA -->
 <div id="account-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-200">
 	<div class="glass-panel w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-700/80 relative">
 		<button id="close-modal-btn" class="absolute top-5 right-5 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
@@ -164,100 +177,12 @@
 </div>
 
 <script>
+	const leaderboardSection = document.getElementById('leaderboard-section');
+	const API_URL = leaderboardSection?.dataset.apiUrl || '/api/accounts';
+
 	const FALLBACK_ICON = 'https://ddragon.leagueoflegends.com/cdn/16.15.1/img/profileicon/29.png';
 
-	const DEFAULT_ACCOUNTS = [
-		{
-			id: '1',
-			name: 'Ergoz',
-			tag: '#LAS',
-			region: 'LAS',
-			role: 'MID',
-			rank: 'DIAMOND IV',
-			lp: 12,
-			wins: 50,
-			losses: 36,
-			posDelta: '▲2',
-			avgGain: 25,
-			avgLoss: 18,
-			sparkline: '10,25 25,15 40,25 55,10 70,12',
-			isLive: false,
-			profileIconUrl: 'https://ddragon.leagueoflegends.com/cdn/16.15.1/img/profileicon/6879.png',
-			opggUrl: 'https://www.op.gg/summoners/las/Ergoz-LAS'
-		},
-		{
-			id: '2',
-			name: 'Ertrax',
-			tag: '#LAS',
-			region: 'LAS',
-			role: 'MID',
-			rank: 'EMERALD III',
-			lp: 21,
-			wins: 21,
-			losses: 11,
-			posDelta: '▲1',
-			avgGain: 30,
-			avgLoss: 12,
-			sparkline: '10,35 25,30 40,20 55,10 70,5',
-			isLive: true,
-			profileIconUrl: 'https://ddragon.leagueoflegends.com/cdn/16.15.1/img/profileicon/5414.png',
-			opggUrl: 'https://www.op.gg/summoners/las/Ertrax-LAS'
-		},
-		{
-			id: '3',
-			name: 'CrixxD',
-			tag: '#LAS',
-			region: 'LAS',
-			role: 'MID',
-			rank: 'PLATINUM I',
-			lp: 61,
-			wins: 26,
-			losses: 18,
-			posDelta: '-',
-			avgGain: 28,
-			avgLoss: 14,
-			sparkline: '10,30 25,25 40,15 55,20 70,5',
-			isLive: true,
-			profileIconUrl: 'https://ddragon.leagueoflegends.com/cdn/16.15.1/img/profileicon/4655.png',
-			opggUrl: 'https://www.op.gg/summoners/las/CrixxD-LAS'
-		},
-		{
-			id: '4',
-			name: 'LUCOOOOCK',
-			tag: '#LAS',
-			region: 'LAS',
-			role: 'MID',
-			rank: 'UNRANKED',
-			lp: 0,
-			wins: 0,
-			losses: 0,
-			posDelta: '▲1',
-			avgGain: 28,
-			avgLoss: 14,
-			sparkline: '10,30 25,20 40,15 55,10 70,5',
-			isLive: true,
-			profileIconUrl: FALLBACK_ICON,
-			opggUrl: 'https://www.op.gg/summoners/las/LUCOOOOCK-LAS'
-		},
-		{
-			id: '5',
-			name: 'depredador ápice',
-			tag: '#6XX',
-			region: 'LAS',
-			role: 'MID',
-			rank: 'UNRANKED',
-			lp: 0,
-			wins: 0,
-			losses: 0,
-			posDelta: '▲1',
-			avgGain: 28,
-			avgLoss: 14,
-			sparkline: '10,30 25,20 40,15 55,10 70,5',
-			isLive: true,
-			profileIconUrl: FALLBACK_ICON,
-			opggUrl: 'https://www.op.gg/summoners/las/depredador%20%C3%A1pice-6XX'
-		}
-	];
+	const DEFAULT_ACCOUNTS = [];
 
 	let accounts = DEFAULT_ACCOUNTS;
 	let currentRole = 'all';
@@ -277,15 +202,15 @@
 
 	async function fetchGlobalAccounts() {
 		try {
-			const res = await fetch('/api/accounts');
-			if (res.ok) {
-				const data = await res.json();
-				if (Array.isArray(data) && data.length > 0) {
-					accounts = data;
-					render();
-				}
+			const res = await fetch(API_URL);
+			const data = await res.json();
+			if (data && Array.isArray(data)) {
+				accounts = data;
 			}
-		} catch(e) {}
+		} catch (e) {
+			console.error('Error fetching accounts:', e);
+		}
+		render();
 	}
 
 	function getRankEmblemUrl(rankStr) {
@@ -355,35 +280,54 @@
 
 	function getPositionDisplay(posIndex, delta) {
 		const num = posIndex + 1;
-		let icon = `#${num}`;
-		let colorClass = 'text-white';
-
+		let iconSvg = '';
+		let shadowColor = '';
+		let iconColor = '';
+		let bgClass = '';
+		
 		if (num === 1) {
-			icon = `👑`;
-			colorClass = 'text-yellow-400';
+			shadowColor = 'rgb(233, 255, 31)';
+			iconColor = 'rgb(244, 244, 39)';
+			bgClass = 'bg-black/20';
+			iconSvg = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="height: 17.52px; width: 17.52px; color: ${iconColor}; filter: drop-shadow(rgba(244, 244, 39, 0.85) 0px 0px 7px);"><path d="M3 8.5 6.6 12 12 4.5 17.4 12 21 8.5V18a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18V8.5Z"></path></svg>`;
 		} else if (num === 2) {
-			icon = `🥈`;
-			colorClass = 'text-slate-300';
+			shadowColor = 'rgb(192, 192, 192)';
+			iconColor = 'rgb(192, 192, 192)';
+			bgClass = 'bg-black/10';
+			iconSvg = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="height: 17.52px; width: 17.52px; color: ${iconColor}; filter: drop-shadow(rgba(192, 192, 192, 0.85) 0px 0px 7px);"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8Z"></path><text x="12" y="16.5" font-size="12.5" font-weight="900" font-family="Montserrat, sans-serif" fill="#000" text-anchor="middle">2</text></svg>`;
 		} else if (num === 3) {
-			icon = `🥉`;
-			colorClass = 'text-[#cd7f32]';
+			shadowColor = 'rgb(205, 127, 50)';
+			iconColor = 'rgb(205, 127, 50)';
+			bgClass = 'bg-black/5';
+			iconSvg = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="height: 17.52px; width: 17.52px; color: ${iconColor}; filter: drop-shadow(rgba(205, 127, 50, 0.85) 0px 0px 7px);"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8Z"></path><text x="12" y="16.5" font-size="12.5" font-weight="900" font-family="Montserrat, sans-serif" fill="#000" text-anchor="middle">3</text></svg>`;
+		} else {
+			shadowColor = 'transparent';
+			iconColor = '#fff';
+			iconSvg = `<span style="color: ${iconColor}; font-size: 11px; font-weight: 800; width: 17.52px; display: inline-block; text-align: center;">${num}</span>`;
 		}
 
 		return `
-			<div class="flex items-center gap-1 font-display font-black text-xs">
-				<span class="${colorClass}">${icon}</span>
-				<span class="text-[9px] text-emerald-400 font-bold">${delta || '▲1'}</span>
-			</div>
+			<td class="rounded-l-xl px-3 py-2.5 text-center ${bgClass}" title="Posición ${num}" style="box-shadow: ${shadowColor} 3px 0px 0px inset;">
+				<div class="flex items-center justify-center gap-1">
+					<span class="inline-flex items-center justify-center">
+						${iconSvg}
+					</span>
+					<span class="inline-block w-[26px] text-[10px] font-bold leading-none text-white/70" title="Racha / Movimiento">${delta || '–'}</span>
+				</div>
+			</td>
 		`;
 	}
 
 	function getRoleSvg(roleStr) {
 		const role = (roleStr || 'MID').toUpperCase();
-		if (role === 'MID') return `<svg class="w-4 h-4 text-yellow-400 mx-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l9 4-9 4-9-4 9-4zm0 8l9 4-9 4-9-4 9-4zm0 8l9 4-9 4-9-4 9-4z"/></svg>`;
-		if (role === 'TOP') return `<svg class="w-4 h-4 text-yellow-400 mx-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>`;
-		if (role === 'JG') return `<svg class="w-4 h-4 text-yellow-400 mx-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z"/><circle cx="12" cy="12" r="3"/></svg>`;
-		if (role === 'ADC') return `<svg class="w-4 h-4 text-yellow-400 mx-auto" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12"/></svg>`;
-		return `<svg class="w-4 h-4 text-yellow-400 mx-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+		let imgName = 'mid.webp';
+		if (role === 'TOP') imgName = 'top.webp';
+		else if (role === 'JG' || role === 'JUNGLE') imgName = 'jungla.webp';
+		else if (role === 'MID') imgName = 'mid.webp';
+		else if (role === 'ADC' || role === 'BOTTOM') imgName = 'adc.webp';
+		else if (role === 'SUP' || role === 'SUPPORT') imgName = 'soporte.webp';
+		
+		return `<img src="/roles/${imgName}" class="w-[22px] h-[22px] mx-auto opacity-70 hover:opacity-100 transition-opacity" alt="${role}" title="${role}" />`;
 	}
 
 	function render() {
@@ -403,7 +347,7 @@
 			return matchesName && matchesRole && matchesLive && matchesElo;
 		});
 
-		// Sort by ELO Score
+		// Ordenar por Puntaje ELO
 		filtered.sort((a, b) => getEloScore(b) - getEloScore(a));
 
 		tableBody.innerHTML = filtered.map((acc, idx) => {
@@ -416,13 +360,11 @@
 			const sparklinePoints = acc.sparkline || '10,30 25,20 40,15 55,10 70,5';
 
 			return `
-				<tr class="hover:bg-[#131622] transition-colors border-b border-slate-800/40">
-					<!-- Position # -->
-					<td class="py-3 px-4">
-						${getPositionDisplay(idx, acc.posDelta)}
-					</td>
+				<tr class="hover:bg-[#131622] transition-colors border-b border-slate-800/40 cursor-pointer" onclick="window.toggleHistory('${acc.id}', '${acc.puuid || ''}', '${acc.region || 'LAS'}')">
+					<!-- Position # (Includes <td> tag from function) -->
+					${getPositionDisplay(idx, acc.posDelta)}
 
-					<!-- Streamer / Player -->
+					<!-- Streamer / Jugador -->
 					<td class="py-3 px-4">
 						<div class="flex items-center gap-3 min-w-[180px]">
 							<div class="relative shrink-0 w-10 h-10">
@@ -440,12 +382,12 @@
 						</div>
 					</td>
 
-					<!-- Role Icon -->
+					<!-- Ícono de Rol -->
 					<td class="py-3 px-4 text-center">
 						${getRoleSvg(acc.role)}
 					</td>
 
-					<!-- Elo & Official Rank Emblem Image -->
+					<!-- Elo e Imagen de Emblema Oficial -->
 					<td class="py-3 px-4">
 						<div class="flex items-center gap-2">
 							<img src="${emblemUrl}" class="w-7 h-7 object-contain drop-shadow-md shrink-0" alt="${acc.rank}" />
@@ -456,32 +398,25 @@
 						</div>
 					</td>
 
-					<!-- Exact SoloQ Challenge Style V/D % Bar -->
-					<td class="py-3 px-4">
-						<div class="w-36">
-							<!-- Header Info -->
-							<div class="flex items-center justify-between text-xs mb-1 font-display">
-								<span class="font-black italic text-[#20e682] text-sm tracking-tight">${winrateNum}%</span>
-								<span class="text-xs font-extrabold text-white">
-									${acc.wins}V <span class="text-slate-500">•</span> <span class="text-[#ff4d6d]">${acc.losses}D</span>
+					<!-- Barra Exacta de Estilo SoloQ Challenge de V/D % -->
+					<td class="px-2 py-2.5">
+						<div class="mx-auto flex w-[150px] flex-col justify-center">
+							<div class="flex items-baseline justify-center gap-2 leading-none font-sans">
+								<span class="text-sm font-black italic leading-none tabular-nums text-emerald-400">${winrateNum}%</span>
+								<span class="text-[11px] font-bold leading-none tabular-nums">
+									<span class="text-emerald-400">${acc.wins}V</span><span class="text-white/25"> · </span><span class="text-rose-400">${acc.losses}D</span>
 								</span>
 							</div>
-
-							<!-- Dual Skewed Segmented Bar -->
-							<div class="flex items-center gap-1 h-2.5 w-full overflow-hidden">
-								<div 
-									class="h-full bg-[#20e682] rounded-sm transform -skew-x-12 transition-all duration-500" 
-									style="width: ${winrateNum}%;"
-								></div>
-								<div 
-									class="h-full bg-[#8c2538] rounded-sm transform -skew-x-12 transition-all duration-500" 
-									style="width: ${lossrateNum}%;"
-								></div>
+							<div class="mt-1.5 h-[6px] w-full" style="transform: skewX(-16deg);">
+								<div class="flex h-full w-full gap-[2px]">
+									<span class="h-full rounded-[1px] bg-emerald-400/85" style="width: ${winrateNum}%;"></span>
+									<span class="h-full rounded-[1px] bg-rose-400/60" style="width: ${lossrateNum}%;"></span>
+								</div>
 							</div>
 						</div>
 					</td>
 
-					<!-- Racha (Sparkline Trend Graph) -->
+					<!-- Racha (Gráfico de Tendencia Sparkline) -->
 					<td class="py-3 px-4">
 						<div class="w-24 h-8 flex items-center justify-center">
 							<svg class="w-full h-full overflow-visible" viewBox="0 0 80 40">
@@ -504,32 +439,329 @@
 						</div>
 					</td>
 
-					<!-- ±LP Gain / Loss -->
+					<!-- Ganancia / Pérdida de LP -->
 					<td class="py-3 px-4 text-center font-display font-extrabold text-xs">
 						<span class="text-emerald-400">▲${acc.avgGain || 30}</span>
 						<span class="text-rose-400">▼${acc.avgLoss || 10}</span>
 					</td>
 
-					<!-- Stats OP.GG Button -->
+					<!-- Botón de Estadísticas OP.GG -->
 					<td class="py-3 px-4 text-center">
 						<a href="${acc.opggUrl}" target="_blank" class="inline-block bg-[#151822] hover:bg-[#E9FF1F] hover:text-slate-950 text-slate-300 font-display font-black text-[11px] px-3 py-1.5 rounded-lg border border-slate-700/80 transition-all">
 							OP.GG
 						</a>
 					</td>
 
-					<!-- Delete Action -->
+					<!-- Acción de Eliminar -->
 					<td class="py-3 px-4 text-right">
 						<button onclick="window.deleteAccount('${acc.id}')" class="text-slate-500 hover:text-rose-400 p-1" title="Eliminar">
 							🗑️
 						</button>
 					</td>
 				</tr>
+				
+				<!-- Fila del historial (oculta por defecto) -->
+				<tr id="history-row-${acc.id}" class="hidden bg-[#0b0c12] border-b border-slate-800/40 transition-all">
+					<td colspan="9" class="p-0">
+						<div class="rounded-2xl border border-white/10 bg-[#101218] p-4 mx-4 mb-4">
+							<div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+								<div class="flex items-center gap-1 rounded-xl bg-white/[0.04] p-1">
+									<button type="button" onclick="window.switchTab('${acc.id}', 'historial')" id="tab-historial-${acc.id}" class="rounded-lg px-3 py-1.5 text-xs font-extrabold transition bg-[#E9FF1F] text-black shadow-[0_0_10px_rgba(233,255,31,0.2)]">Historial</button>
+									<button type="button" onclick="window.switchTab('${acc.id}', 'stats')" id="tab-stats-${acc.id}" class="rounded-lg px-3 py-1.5 text-xs font-extrabold transition text-white/70 hover:text-white">Stats &amp; Elo</button>
+									<button type="button" class="rounded-lg px-3 py-1.5 text-xs font-extrabold transition text-white/70 hover:text-white opacity-50 cursor-not-allowed">Premios Kick</button>
+									<button type="button" class="rounded-lg px-3 py-1.5 text-xs font-extrabold transition text-white/70 hover:text-white opacity-50 cursor-not-allowed">Blue Shell</button>
+								</div>
+								<a href="${acc.opggUrl}" target="_blank" class="rounded-lg border border-white/15 bg-white/[0.04] px-3 py-1.5 text-xs font-extrabold text-white/70 transition hover:bg-white/10 hover:text-white">Ver ficha completa →</a>
+							</div>
+							
+							<!-- Contenedor dinámico de partidas -->
+							<div id="history-content-${acc.id}" class="flex flex-col gap-1.5 min-h-[100px] justify-center">
+								<!-- Cargando por defecto -->
+							</div>
+						</div>
+					</td>
+				</tr>
 			`;
 		}).join('');
+
+		// Despachar evento personalizado para notificar al padre sobre las cuentas actuales
+		window.dispatchEvent(new CustomEvent('accountsLoaded', { detail: accounts }));
 	}
 
-	// Silent Auto-Refresh of Live Stats from Riot API
+	// -------------------------------
+	// LÓGICA DEL HISTORIAL (MATCHES)
+	// -------------------------------
+	
+	const SPELL_MAP: Record<number, string> = {
+		1: "SummonerBoost", 3: "SummonerExhaust", 4: "SummonerFlash", 
+		6: "SummonerHaste", 7: "SummonerHeal", 11: "SummonerSmite", 
+		12: "SummonerTeleport", 13: "SummonerMana", 14: "SummonerDot", 
+		21: "SummonerBarrier", 32: "SummonerSnowball"
+	};
+
+	const RUNE_TREES: Record<number, string> = {
+		8100: "7200_domination",
+		8300: "7203_whimsy",
+		8000: "7201_precision",
+		8400: "7204_resolve",
+		8200: "7202_sorcery"
+	};
+
+	function getTimeAgo(timestamp: number) {
+		const seconds = Math.floor((Date.now() - timestamp) / 1000);
+		let interval = seconds / 31536000;
+		if (interval > 1) return Math.floor(interval) + " años";
+		interval = seconds / 2592000;
+		if (interval > 1) return Math.floor(interval) + " meses";
+		interval = seconds / 86400;
+		if (interval > 1) return Math.floor(interval) + " d";
+		interval = seconds / 3600;
+		if (interval > 1) return Math.floor(interval) + " h";
+		interval = seconds / 60;
+		if (interval > 1) return Math.floor(interval) + " min";
+		return Math.floor(seconds) + " seg";
+	}
+
+	function formatDuration(seconds: number) {
+		const m = Math.floor(seconds / 60);
+		const s = seconds % 60;
+		return `${m}:${s.toString().padStart(2, '0')}`;
+	}
+
+	function generateMatchRow(m: any) {
+		const isWin = m.win;
+		const resultText = isWin ? 'Victoria' : 'Derrota';
+		const resultColor = isWin ? 'text-emerald-300' : 'text-rose-300';
+		const borderLeft = isWin ? 'border-l-emerald-400/80' : 'border-l-rose-500/80';
+		
+		const spell1 = SPELL_MAP[m.summoner1Id] || 'SummonerFlash';
+		const spell2 = SPELL_MAP[m.summoner2Id] || 'SummonerFlash';
+		
+		const rune1 = RUNE_TREES[m.primaryStyle] || '7200_domination';
+		const rune2 = RUNE_TREES[m.subStyle] || '7201_precision';
+
+		const champUrl = `https://ddragon.leagueoflegends.com/cdn/14.15.1/img/champion/${m.championName}.png`;
+		const oppChampUrl = m.opponentChampion !== 'unknown' 
+			? `https://ddragon.leagueoflegends.com/cdn/14.15.1/img/champion/${m.opponentChampion}.png` 
+			: '/favicon.svg';
+
+		const itemsHtml = m.items.map((itemId: number, idx: number) => {
+			const isTrinket = idx === 6;
+			const extraClasses = isTrinket ? "ml-1 border border-yellow-200/20" : "";
+			if (!itemId || itemId === 0) return `<span class="h-[22px] w-[22px] rounded bg-black/30 ${extraClasses}"></span>`;
+			return `<img src="https://ddragon.leagueoflegends.com/cdn/14.15.1/img/item/${itemId}.png" class="h-[22px] w-[22px] rounded bg-black/50 object-cover ${extraClasses}" alt="Item" />`;
+		}).join('');
+
+		const csPerMin = m.gameDuration > 0 ? (m.cs / (m.gameDuration / 60)).toFixed(1) : "0.0";
+
+		return `
+			<div class="rounded-xl border border-white/[0.05] border-l-[3px] bg-[#14161d] transition-colors ${borderLeft}">
+				<button type="button" class="grid w-full grid-cols-[130px_auto_1fr_auto_88px_26px] items-center gap-3 rounded-xl px-3 py-2 text-left transition-colors hover:bg-white/[0.03] sm:gap-4">
+					
+					<!-- Lado Izquierdo: Resultado y Tiempo -->
+					<div class="flex items-baseline gap-1.5 whitespace-nowrap">
+						<span class="text-[13px] font-extrabold ${resultColor}">${resultText}</span>
+						<span class="text-[10px] text-white/65">${formatDuration(m.gameDuration)} · hace ${getTimeAgo(m.gameCreation)}</span>
+					</div>
+					
+					<!-- Campeón, Spells y Runas -->
+					<div class="flex items-center gap-2">
+						<div class="flex items-center gap-[3px]">
+							<div class="shrink-0 overflow-hidden rounded-lg bg-black/40 ring-1 ring-white/10" style="width: 38px; height: 38px;">
+								<img src="${champUrl}" class="h-full w-full object-cover" alt="${m.championName}" />
+							</div>
+							<div class="flex flex-col gap-[2px]">
+								<img src="https://ddragon.leagueoflegends.com/cdn/14.15.1/img/spell/${spell1}.png" class="bg-black/50 object-cover rounded" style="width: 18px; height: 18px;" alt="Spell" />
+								<img src="https://ddragon.leagueoflegends.com/cdn/14.15.1/img/spell/${spell2}.png" class="bg-black/50 object-cover rounded" style="width: 18px; height: 18px;" alt="Spell" />
+							</div>
+							<div class="flex flex-col gap-[2px]">
+								<img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/${rune1}.png" class="bg-black/50 object-cover rounded-full object-contain p-[1px]" style="width: 18px; height: 18px;" alt="Rune" onerror="this.src='/favicon.svg'" />
+								<img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/${rune2}.png" class="bg-black/50 object-cover rounded-full object-contain p-[1px]" style="width: 18px; height: 18px;" alt="Rune" onerror="this.src='/favicon.svg'" />
+							</div>
+						</div>
+						
+						<!-- VS Oponente -->
+						<span class="px-0.5 text-[10px] font-semibold uppercase text-white/65">vs</span>
+						<div class="flex items-center gap-[3px]">
+							<div class="shrink-0 overflow-hidden rounded-lg bg-black/40 ring-1 ring-white/10" style="width: 32px; height: 32px;">
+								<img src="${oppChampUrl}" class="h-full w-full object-cover" onerror="this.style.display='none'" alt="Opponent" />
+							</div>
+						</div>
+					</div>
+					
+					<!-- KDA y Estadísticas -->
+					<div class="min-w-0 text-center">
+						<span class="text-[15px] font-extrabold tabular-nums text-white">
+							${m.kills} <span class="text-white/50">/</span> <span class="text-rose-300">${m.deaths}</span> <span class="text-white/50">/</span> ${m.assists}
+						</span>
+						<span class="ml-2 text-[11px] font-medium text-white/70">${m.kdaRatio} KDA · ${m.kp}% KP · ${m.cs} CS <span class="text-white/40">(${csPerMin})</span></span>
+					</div>
+					
+					<!-- Objetos -->
+					<div class="hidden items-center gap-[3px] lg:flex">
+						${itemsHtml}
+					</div>
+					
+					<!-- Cambio de LP -->
+					<div class="flex items-center justify-end gap-1.5 whitespace-nowrap text-right">
+						<span class="text-[13px] font-extrabold tabular-nums ${resultColor}">${m.lpChange}</span>
+					</div>
+
+					<span class="flex h-5 w-5 items-center justify-center text-[10px] text-white/60 transition-transform" aria-hidden="true">▼</span>
+				</button>
+			</div>
+		`;
+	}
+
+	// Caché para las partidas cargadas
+	const matchesCache = new Map();
+
+	(window as any).switchTab = function(id: string, tab: string) {
+		const btnHistorial = document.getElementById(`tab-historial-${id}`);
+		const btnStats = document.getElementById(`tab-stats-${id}`);
+		const contentDiv = document.getElementById(`history-content-${id}`);
+		
+		if (!btnHistorial || !btnStats || !contentDiv) return;
+
+		// Estilos de activo/inactivo
+		const activeClass = 'bg-[#E9FF1F] text-black shadow-[0_0_10px_rgba(233,255,31,0.2)]'.split(' ');
+		const inactiveClass = 'text-white/70 hover:text-white'.split(' ');
+
+		if (tab === 'historial') {
+			btnHistorial.classList.add(...activeClass);
+			btnHistorial.classList.remove(...inactiveClass);
+			btnStats.classList.add(...inactiveClass);
+			btnStats.classList.remove(...activeClass);
+
+			const data = matchesCache.get(id);
+			if (data && data.matches) {
+				contentDiv.innerHTML = `<div class="w-full space-y-1.5">${data.matches.map(m => generateMatchRow(m)).join('')}</div>`;
+			}
+		} else if (tab === 'stats') {
+			btnStats.classList.add(...activeClass);
+			btnStats.classList.remove(...inactiveClass);
+			btnHistorial.classList.add(...inactiveClass);
+			btnHistorial.classList.remove(...activeClass);
+
+			const data = matchesCache.get(id);
+			if (data && data.matches && data.matches.length > 0) {
+				// Calcular estadísticas resumidas
+				let totalKills = 0, totalDeaths = 0, totalAssists = 0;
+				let wins = 0;
+				data.matches.forEach(m => {
+					totalKills += m.kills;
+					totalDeaths += m.deaths;
+					totalAssists += m.assists;
+					if (m.win) wins++;
+				});
+				const totalGames = data.matches.length;
+				const winRate = Math.round((wins / totalGames) * 100);
+				const avgKills = (totalKills / totalGames).toFixed(1);
+				const avgDeaths = (totalDeaths / totalGames).toFixed(1);
+				const avgAssists = (totalAssists / totalGames).toFixed(1);
+				const avgKda = totalDeaths === 0 ? 'Perfecto' : ((totalKills + totalAssists) / totalDeaths).toFixed(2);
+
+				contentDiv.innerHTML = `
+					<div class="flex gap-4 p-4">
+						<!-- Winrate Circular -->
+						<div class="flex flex-col items-center justify-center bg-black/40 p-4 rounded-xl border border-white/5 w-1/3">
+							<div class="relative w-24 h-24 flex items-center justify-center rounded-full border-4 ${winRate >= 50 ? 'border-emerald-400' : 'border-rose-400'}">
+								<span class="text-2xl font-black text-white">${winRate}%</span>
+							</div>
+							<div class="text-xs font-bold text-slate-400 mt-3">${wins} Victorias / ${totalGames - wins} Derrotas</div>
+							<div class="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Últimas ${totalGames} partidas</div>
+						</div>
+						
+						<!-- Stats KDA -->
+						<div class="flex flex-col justify-center bg-black/40 p-5 rounded-xl border border-white/5 w-2/3">
+							<h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Rendimiento Promedio</h4>
+							<div class="flex items-end gap-3 mb-2">
+								<div class="text-3xl font-display font-black text-white">${avgKda}</div>
+								<div class="text-sm font-bold text-slate-500 mb-1">KDA RATIO</div>
+							</div>
+							<div class="flex items-center gap-2 text-lg font-bold">
+								<span class="text-emerald-300">${avgKills}</span>
+								<span class="text-slate-600">/</span>
+								<span class="text-rose-400">${avgDeaths}</span>
+								<span class="text-slate-600">/</span>
+								<span class="text-white/80">${avgAssists}</span>
+							</div>
+						</div>
+					</div>
+				`;
+			} else {
+				contentDiv.innerHTML = `<div class="text-center py-6 text-slate-500 font-semibold">No hay suficientes datos para generar estadísticas.</div>`;
+			}
+		}
+	};
+
+	(window as any).toggleHistory = async function(id: string, puuid: string, region: string) {
+		const row = document.getElementById(`history-row-${id}`);
+		if (!row) return;
+
+		// Si está cerrado, abrimos (y cerramos los demás)
+		if (row.classList.contains('hidden')) {
+			document.querySelectorAll('[id^="history-row-"]').forEach(r => {
+				r.classList.add('hidden');
+				// Quitar highlight de filas
+				const prevRow = r.previousElementSibling;
+				if (prevRow) {
+					prevRow.classList.remove('bg-[#1a1e2d]', 'border-[#E9FF1F]/50');
+				}
+			});
+			
+			row.classList.remove('hidden');
+			const mainRow = row.previousElementSibling;
+			if (mainRow) {
+				mainRow.classList.add('bg-[#1a1e2d]', 'border-[#E9FF1F]/50');
+			}
+
+			const contentDiv = document.getElementById(`history-content-${id}`);
+			if (contentDiv && !contentDiv.dataset.loaded) {
+				if (!puuid) {
+					contentDiv.innerHTML = `<div class="text-center py-6 text-slate-500 font-semibold">El PUUID no está disponible. Espera el auto-refresh o re-importa la cuenta.</div>`;
+					return;
+				}
+
+				contentDiv.innerHTML = `
+					<div class="flex flex-col items-center justify-center py-8">
+						<div class="w-6 h-6 border-2 border-[#E9FF1F] border-t-transparent rounded-full animate-spin mb-2"></div>
+						<div class="text-xs text-slate-400 font-bold">Cargando últimas partidas...</div>
+					</div>
+				`;
+
+				try {
+					const res = await fetch(`/api/matches?puuid=${puuid}&region=${region}`);
+					const data = await res.json();
+					if (data.success && data.matches.length > 0) {
+						matchesCache.set(id, data); // Guardar en caché
+						contentDiv.innerHTML = `<div class="w-full space-y-1.5">${data.matches.map(m => generateMatchRow(m)).join('')}</div>`;
+						contentDiv.dataset.loaded = 'true';
+						
+						// Reset tab to historial
+						(window as any).switchTab(id, 'historial');
+					} else {
+						contentDiv.innerHTML = `<div class="text-center py-6 text-slate-500 font-semibold">${data.error || 'No se encontraron partidas recientes.'}</div>`;
+					}
+				} catch (e) {
+					contentDiv.innerHTML = `<div class="text-center py-6 text-rose-400 font-semibold">Error al cargar historial. Intenta nuevamente más tarde.</div>`;
+				}
+			} else {
+				// Si ya estaba cargado, asegurarnos de volver a la pestaña historial por defecto al abrir
+				(window as any).switchTab(id, 'historial');
+			}
+		} else {
+			row.classList.add('hidden');
+			const mainRow = row.previousElementSibling;
+			if (mainRow) {
+				mainRow.classList.remove('bg-[#1a1e2d]', 'border-[#E9FF1F]/50');
+			}
+		}
+	};
+
+	// Auto-Actualización Silenciosa de Stats en Vivo desde la API de Riot
 	async function silentAutoRefreshAll() {
+		let hasChanges = false;
 		for (const acc of accounts) {
 			try {
 				const tagClean = acc.tag.replace('#','');
@@ -537,22 +769,44 @@
 				const data = await res.json();
 
 				if (data.success) {
-					acc.rank = data.tier || acc.rank;
-					acc.lp = data.lp ?? acc.lp;
-					acc.wins = data.wins ?? acc.wins;
-					acc.losses = data.losses ?? acc.losses;
-					acc.profileIconUrl = data.profileIconUrl || acc.profileIconUrl;
+					let changed = false;
+					if (acc.rank !== data.tier && data.tier) { acc.rank = data.tier; changed = true; }
+					if (acc.lp !== data.lp && data.lp !== undefined) { acc.lp = data.lp; changed = true; }
+					if (acc.wins !== data.wins && data.wins !== undefined) { acc.wins = data.wins; changed = true; }
+					if (acc.losses !== data.losses && data.losses !== undefined) { acc.losses = data.losses; changed = true; }
+					
+					if (data.puuid && acc.puuid !== data.puuid) {
+						acc.puuid = data.puuid;
+						changed = true;
+					}
+
+					if (data.profileIconUrl && acc.profileIconUrl !== data.profileIconUrl) {
+						acc.profileIconUrl = data.profileIconUrl;
+						changed = true;
+					}
+
+					if (changed) {
+						hasChanges = true;
+						// Sincronizar silenciosamente en segundo plano con Netlify Blobs para que otros dispositivos (celular) vean lo mismo
+						fetch(API_URL, {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify(acc)
+						}).catch(() => {});
+					}
 				}
+				// Añadir un retraso de 600ms entre cada cuenta para evitar saturar el límite de peticiones de Riot (Rate Limit 429)
+				await new Promise(r => setTimeout(r, 600));
 			} catch(e) {}
 		}
 
-		render();
+		if (hasChanges) render();
 	}
 
 	(window as any).deleteAccount = async function(id) {
 		if (confirm('¿Eliminar cuenta de la lista?')) {
 			try {
-				const res = await fetch(`/api/accounts?id=${id}`, { method: 'DELETE' });
+				const res = await fetch(`${API_URL}?id=${id}`, { method: 'DELETE' });
 				if (res.ok) {
 					const data = await res.json();
 					if (data.accounts) accounts = data.accounts;
@@ -562,19 +816,31 @@
 		}
 	};
 
-	// Role Filters
+	// Filtros de Rol
 	document.querySelectorAll('.role-btn').forEach(btn => {
 		btn.addEventListener('click', () => {
 			document.querySelectorAll('.role-btn').forEach(b => {
-				b.className = 'role-btn p-2 rounded-lg text-slate-400 hover:text-yellow-400 transition-all';
+				b.className = 'role-btn p-2 rounded-lg transition-all hover:bg-white/5';
+				const img = b.querySelector('img');
+				if (img) {
+					img.classList.remove('opacity-100', 'brightness-0');
+					img.classList.add('opacity-50');
+				}
 			});
-			btn.className = 'role-btn px-3 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all';
+			
+			btn.className = 'role-btn px-3 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all flex items-center justify-center';
+			const img = btn.querySelector('img');
+			if (img) {
+				img.classList.remove('opacity-50');
+				img.classList.add('opacity-100', 'brightness-0'); // Se vuelve negro al estar activo en fondo amarillo
+			}
+			
 			currentRole = (btn as HTMLElement).dataset.role || 'all';
 			render();
 		});
 	});
 
-	// Tab High/Low Elo Filters
+	// Filtros de Pestaña High/Low Elo
 	const tabTodos = document.getElementById('tab-todos');
 	const tabHigh = document.getElementById('tab-high');
 	const tabLow = document.getElementById('tab-low');
@@ -662,15 +928,15 @@
 			opggUrl: `https://www.op.gg/summoners/${regionInput.value.toLowerCase()}/${encodeURIComponent(gameName)}-${tagClean}`
 		};
 
-		// Save via Live Netlify Blobs API so it persists for ALL users/devices instantly!
+		// Guardar vía Live Netlify Blobs API para que persista para TODOS los usuarios/dispositivos al instante
 		try {
-			const postRes = await fetch('/api/accounts', {
+			const dbRes = await fetch(API_URL, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(newAcc)
 			});
-			if (postRes.ok) {
-				const postData = await postRes.json();
+			if (dbRes.ok) {
+				const postData = await dbRes.json();
 				if (postData.accounts) accounts = postData.accounts;
 			}
 		} catch(e) {
@@ -681,8 +947,62 @@
 		accountModal.classList.add('opacity-0', 'pointer-events-none');
 	});
 
+	const exportBtn = document.getElementById('export-btn');
+	const importBtn = document.getElementById('import-btn');
+	const importFile = document.getElementById('import-file') as HTMLInputElement;
+
+	exportBtn?.addEventListener('click', () => {
+		const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(accounts, null, 2));
+		const downloadAnchorNode = document.createElement('a');
+		downloadAnchorNode.setAttribute("href", dataStr);
+		downloadAnchorNode.setAttribute("download", "cuentas_solokito.json");
+		document.body.appendChild(downloadAnchorNode);
+		downloadAnchorNode.click();
+		downloadAnchorNode.remove();
+	});
+
+	importBtn?.addEventListener('click', () => {
+		importFile?.click();
+	});
+
+	importFile?.addEventListener('change', (e) => {
+		const file = (e.target as HTMLInputElement).files?.[0];
+		if (!file) return;
+
+		const reader = new FileReader();
+		reader.onload = async (event) => {
+			try {
+				const json = JSON.parse(event.target?.result as string);
+				if (Array.isArray(json)) {
+					const res = await fetch(API_URL, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(json)
+					});
+					if (res.ok) {
+						const data = await res.json();
+						if (data.accounts) {
+							accounts = data.accounts;
+							render();
+							alert('✅ Cuentas importadas exitosamente');
+						}
+					} else {
+						alert('❌ Error al guardar las cuentas importadas');
+					}
+				} else {
+					alert('❌ El archivo no tiene el formato correcto (debe ser un array JSON)');
+				}
+			} catch (err) {
+				alert('❌ Error al leer el archivo JSON');
+			}
+			// Reiniciar input
+			importFile.value = '';
+		};
+		reader.readAsText(file);
+	});
+
 	fetchGlobalAccounts();
-	render();
-	silentAutoRefreshAll();
-	setInterval(silentAutoRefreshAll, 30000);
+	// Retrasamos el primer refresco automático y lo ejecutamos cada 2 minutos (120000 ms) para no saturar la API
+	setTimeout(silentAutoRefreshAll, 5000);
+	setInterval(silentAutoRefreshAll, 120000);
 </script>

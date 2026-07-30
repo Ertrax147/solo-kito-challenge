@@ -6,7 +6,7 @@ const DEFAULT_ACCOUNTS = [];
 
 export async function GET() {
   try {
-    const store = getStore({ name: 'solo-kito-accounts', consistency: 'strong' });
+    const store = getStore({ name: 'kito-personal-accounts', consistency: 'strong' });
     const stored = await store.get('accounts_list', { type: 'json' });
     const list = stored && Array.isArray(stored) && stored.length > 0 ? stored : DEFAULT_ACCOUNTS;
 
@@ -29,7 +29,7 @@ export async function GET() {
 export async function POST({ request }) {
   try {
     const newAcc = await request.json();
-    const store = getStore({ name: 'solo-kito-accounts', consistency: 'strong' });
+    const store = getStore({ name: 'kito-personal-accounts', consistency: 'strong' });
     const stored = (await store.get('accounts_list', { type: 'json' })) || DEFAULT_ACCOUNTS;
 
     let list = Array.isArray(stored) ? stored : DEFAULT_ACCOUNTS;
@@ -70,7 +70,7 @@ export async function DELETE({ request }) {
   try {
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
-    const store = getStore({ name: 'solo-kito-accounts', consistency: 'strong' });
+    const store = getStore({ name: 'kito-personal-accounts', consistency: 'strong' });
     const stored = (await store.get('accounts_list', { type: 'json' })) || DEFAULT_ACCOUNTS;
 
     const filtered = stored.filter(a => a.id !== id);

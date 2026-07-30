@@ -5,7 +5,7 @@
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
 		<div class="flex flex-col md:flex-row items-center justify-between gap-4">
 			
-			<!-- Logo & Event Status -->
+			<!-- Logo y Estado del Evento -->
 			<div class="flex items-center gap-4">
 				<div class="relative flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-[#E9FF1F] via-amber-400 to-yellow-600 p-0.5 shadow-lg shadow-yellow-500/20">
 					<div class="w-full h-full bg-[#090d16] rounded-[10px] flex items-center justify-center font-display font-black text-2xl text-[#E9FF1F] tracking-tighter">
@@ -27,32 +27,10 @@
 				</div>
 			</div>
 
-			<!-- Quick Global Stats Banner + Riot Key Config -->
-			<div class="flex items-center gap-2 sm:gap-4">
-				<div class="flex items-center gap-2 sm:gap-4 bg-slate-900/90 border border-slate-800/80 rounded-xl p-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm">
-					<div class="text-center px-2 border-r border-slate-800">
-						<div class="text-slate-400 text-[10px] sm:text-xs uppercase font-medium">Cuentas</div>
-						<div class="font-display text-base sm:text-lg font-bold text-yellow-400" id="global-accounts-count">2</div>
-					</div>
-
-					<div class="text-center px-2 border-r border-slate-800">
-						<div class="text-slate-400 text-[10px] sm:text-xs uppercase font-medium">Winrate Global</div>
-						<div class="font-display text-base sm:text-lg font-bold text-emerald-400" id="global-winrate">58.6%</div>
-					</div>
-
-					<div class="text-center px-2 border-r border-slate-800">
-						<div class="text-slate-400 text-[10px] sm:text-xs uppercase font-medium">Peak Elo</div>
-						<div class="font-display text-base sm:text-lg font-bold text-amber-300" id="global-peak-rank">Diamond IV</div>
-					</div>
-
-					<div class="text-center px-2">
-						<div class="text-slate-400 text-[10px] sm:text-xs uppercase font-medium">Partidas</div>
-						<div class="font-display text-base sm:text-lg font-bold text-cyan-400" id="global-total-games">130</div>
-					</div>
-				</div>
-
-				<!-- Riot API Key config button -->
-				<button id="open-key-modal-btn" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-bold px-3 py-2.5 rounded-xl flex items-center gap-1.5 transition-all" title="Configurar clave oficial de Riot API">
+			<!-- Configuración de Riot API Key -->
+			<div class="flex items-center">
+				<!-- Botón de configuración de Riot API Key -->
+				<button id="open-key-modal-btn" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-bold px-3 py-2.5 rounded-xl flex items-center gap-1.5 transition-all shadow-lg" title="Configurar clave oficial de Riot API">
 					<span>🔑</span>
 					<span class="hidden sm:inline">Riot API Key</span>
 				</button>
@@ -62,7 +40,7 @@
 	</div>
 </header>
 
-<!-- MODAL RIOT API KEY -->
+<!-- MODAL: RIOT API KEY -->
 <div id="key-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-200">
 	<div class="glass-panel w-full max-w-md rounded-2xl p-6 shadow-2xl border border-slate-700/80 relative">
 		<button id="close-key-modal-btn" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg">

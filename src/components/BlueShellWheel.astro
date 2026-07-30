@@ -3,12 +3,12 @@
 
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-slate-800/80">
 	<div class="glass-panel rounded-3xl p-6 sm:p-8 relative overflow-hidden bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-slate-950 border-cyan-500/20">
-		<!-- Background Glow -->
+		<!-- Resplandor de Fondo -->
 		<div class="absolute -right-20 -bottom-20 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
 		<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
 			
-			<!-- Left Description & Controls -->
+			<!-- Controles y Descripción Izquierda -->
 			<div class="lg:col-span-5 space-y-4">
 				<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-wider">
 					<span>🐢 Sistema Blue Shell Kito</span>
@@ -20,7 +20,7 @@
 					Tal como en el SoloQ Challenge original, gira la ruleta antes de tu siguiente partida para aplicar una regla especial o un desafío extra a tus cuentas de Kito.
 				</p>
 
-				<!-- Result Display Banner -->
+				<!-- Banner de Mostrar Resultado -->
 				<div id="challenge-result-box" class="hidden bg-slate-950/90 border-2 border-[#E9FF1F] rounded-2xl p-5 shadow-xl shadow-yellow-500/10 animate-pulse-glow">
 					<div class="text-[10px] uppercase font-bold tracking-widest text-yellow-400 mb-1">🔥 Tu Desafío Activo</div>
 					<div id="challenge-title" class="font-display font-extrabold text-xl sm:text-2xl text-white mb-1">
@@ -31,7 +31,7 @@
 					</p>
 				</div>
 
-				<!-- Spin Action Button -->
+				<!-- Botón de Acción para Girar -->
 				<div>
 					<button id="spin-wheel-btn" class="w-full sm:w-auto bg-gradient-to-r from-cyan-400 via-teal-400 to-[#E9FF1F] text-slate-950 font-black text-base px-8 py-4 rounded-2xl hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-cyan-500/20 flex items-center justify-center gap-3">
 						<span class="text-xl">🎲</span>
@@ -40,26 +40,26 @@
 				</div>
 			</div>
 
-			<!-- Right Interactive Wheel Display -->
+			<!-- Visualización Derecha de Rueda Interactiva -->
 			<div class="lg:col-span-7 flex flex-col items-center justify-center">
 				<div class="relative w-72 h-72 sm:w-80 sm:h-80 flex items-center justify-center">
-					<!-- Wheel Pointer -->
+					<!-- Puntero de Rueda -->
 					<div class="absolute -top-3 left-1/2 -translate-x-1/2 z-20 w-6 h-8 text-yellow-400 drop-shadow-md">
 						<svg class="w-full h-full fill-current" viewBox="0 0 24 24">
 							<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" transform="rotate(180 12 12)"/>
 						</svg>
 					</div>
 
-					<!-- Rotating Circle SVG -->
+					<!-- Círculo Rotativo SVG -->
 					<div id="wheel-circle" class="w-full h-full rounded-full border-4 border-cyan-500/40 bg-slate-900 p-2 shadow-2xl transition-all duration-[4000ms] cubic-bezier(0.15, 0.9, 0.2, 1) flex items-center justify-center relative overflow-hidden">
 						<div class="absolute inset-0 bg-[conic-gradient(from_0deg,#0f172a_0deg_45deg,#1e293b_45deg_90deg,#0f172a_90deg_135deg,#1e293b_135deg_180deg,#0f172a_180deg_225deg,#1e293b_225deg_270deg,#0f172a_270deg_315deg,#1e293b_315deg_360deg)]"></div>
 						
-						<!-- Center Hub -->
+						<!-- Centro de la Rueda -->
 						<div class="w-20 h-20 rounded-full bg-slate-950 border-2 border-cyan-400 z-10 flex items-center justify-center font-display font-extrabold text-cyan-300 text-sm shadow-inner">
 							KITO
 						</div>
 
-						<!-- Items Text around -->
+						<!-- Texto de Ítems Alrededor -->
 						<div class="absolute inset-0 p-4 text-[10px] font-bold text-slate-300 flex items-center justify-center pointer-events-none">
 							<div class="absolute top-3 font-display">NO FLASH</div>
 							<div class="absolute right-3 font-display">PICK OFF-META</div>
@@ -114,7 +114,7 @@
 		spinBtn.setAttribute('disabled', 'true');
 		spinBtn.classList.add('opacity-70', 'cursor-not-allowed');
 
-		// Calculate random rotation (5 to 8 full spins + random slice angle)
+		// Calcular rotación aleatoria (5 a 8 vueltas completas + ángulo aleatorio)
 		const extraSpins = 360 * (5 + Math.floor(Math.random() * 4));
 		const randomAngle = Math.floor(Math.random() * 360);
 		currentRotation += extraSpins + randomAngle;
@@ -123,7 +123,7 @@
 			wheelCircle.style.transform = `rotate(${currentRotation}deg)`;
 		}
 
-		// Wait for animation completion (4000ms)
+		// Esperar a que termine la animación (4000ms)
 		setTimeout(() => {
 			const randomIndex = Math.floor(Math.random() * CHALLENGES.length);
 			const challenge = CHALLENGES[randomIndex];

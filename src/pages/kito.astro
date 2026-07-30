@@ -1,0 +1,124 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Leaderboard from '../components/Leaderboard.astro';
+import BlueShellWheel from '../components/BlueShellWheel.astro';
+import GoalsTracker from '../components/GoalsTracker.astro';
+---
+
+<Layout title="Mis Cuentas Privadas - Solo Kito">
+	<!-- Cabecera -->
+	<Header />
+
+	<!-- Cuerpo Principal -->
+	<main class="flex-1 space-y-4 pb-16">
+		<div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 mt-4">
+			<!-- Banner de Estadísticas Globales (Dinámico) -->
+			<div class="flex items-center gap-2 sm:gap-4 bg-slate-900/90 border border-slate-800/80 rounded-xl p-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm w-fit mx-auto lg:mx-0 shadow-xl shadow-yellow-500/5">
+				<div class="text-center px-4 border-r border-slate-800">
+					<div class="text-slate-400 text-[10px] sm:text-xs uppercase font-medium">Cuentas</div>
+					<div class="font-display text-base sm:text-lg font-bold text-yellow-400" id="dyn-accounts-count">0</div>
+				</div>
+
+				<div class="text-center px-4 border-r border-slate-800">
+					<div class="text-slate-400 text-[10px] sm:text-xs uppercase font-medium">Winrate Global</div>
+					<div class="font-display text-base sm:text-lg font-bold text-emerald-400" id="dyn-winrate">0%</div>
+				</div>
+
+				<div class="text-center px-4 border-r border-slate-800">
+					<div class="text-slate-400 text-[10px] sm:text-xs uppercase font-medium">Peak Elo</div>
+					<div class="font-display text-base sm:text-lg font-bold text-amber-300" id="dyn-peak-rank">UNRANKED</div>
+				</div>
+
+				<div class="text-center px-4">
+					<div class="text-slate-400 text-[10px] sm:text-xs uppercase font-medium">Partidas</div>
+					<div class="font-display text-base sm:text-lg font-bold text-cyan-400" id="dyn-total-games">0</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Tabla de Clasificación de Cuentas (Conectada a la API privada kito) -->
+		<Leaderboard apiUrl="/api/kito-accounts" />
+
+		<!-- Ruleta de Retos (Blue Shell) -->
+		<BlueShellWheel />
+
+		<!-- Rastreador de Metas y Logros -->
+		<GoalsTracker />
+	</main>
+
+	<!-- Pie de Página -->
+	<footer class="border-t border-slate-800/80 bg-slate-950/80 py-8 text-center text-xs text-slate-500">
+		<div class="max-w-7xl mx-auto px-4">
+			<p class="font-display text-sm font-bold text-slate-400 mb-1">
+				SOLO KITO CHALLENGE • ZONA PRIVADA
+			</p>
+			<p>Página secreta conectada a tus cuentas personales.</p>
+		</div>
+	</footer>
+
+	<!-- Script para calcular estadísticas de cuentas privadas -->
+	<script>
+		// Helper para asignar valor a rangos (para buscar el Peak Elo)
+		const TIERS = {
+			'CHALLENGER': 10, 'GRANDMASTER': 9, 'MASTER': 8,
+			'DIAMOND': 7, 'EMERALD': 6, 'PLATINUM': 5,
+			'GOLD': 4, 'SILVER': 3, 'BRONZE': 2, 'IRON': 1, 'UNRANKED': 0
+		};
+		const DIVISIONS = { 'I': 4, 'II': 3, 'III': 2, 'IV': 1 };
+
+		function getEloScore(acc) {
+			if (!acc || !acc.rank || acc.rank === 'UNRANKED') return 0;
+			const parts = acc.rank.split(' ');
+			const tier = parts[0];
+			const div = parts[1] || 'IV';
+			const tierScore = TIERS[tier] || 0;
+			const divScore = DIVISIONS[div] || 1;
+			return (tierScore * 100000) + (divScore * 1000) + (acc.lp || 0);
+		}
+
+		window.addEventListener('accountsLoaded', (e: any) => {
+			const accounts = e.detail || [];
+			
+			// 1. Número de cuentas
+			const countEl = document.getElementById('dyn-accounts-count');
+			if (countEl) countEl.innerText = accounts.length.toString();
+
+			if (accounts.length === 0) {
+				const winEl = document.getElementById('dyn-winrate');
+				if (winEl) winEl.innerText = '0%';
+				const peakEl = document.getElementById('dyn-peak-rank');
+				if (peakEl) peakEl.innerText = 'UNRANKED';
+				const gamesEl = document.getElementById('dyn-total-games');
+				if (gamesEl) gamesEl.innerText = '0';
+				return;
+			}
+
+			// 2. Partidas Totales y Winrate
+			let totalWins = 0;
+			let totalLosses = 0;
+			let peakAcc = accounts[0];
+
+			accounts.forEach(acc => {
+				totalWins += (acc.wins || 0);
+				totalLosses += (acc.losses || 0);
+				
+				// 3. Peak Elo
+				if (getEloScore(acc) > getEloScore(peakAcc)) {
+					peakAcc = acc;
+				}
+			});
+
+			const totalGames = totalWins + totalLosses;
+			const totalGamesEl = document.getElementById('dyn-total-games');
+			if (totalGamesEl) totalGamesEl.innerText = totalGames.toString();
+
+			const winrate = totalGames > 0 ? ((totalWins / totalGames) * 100).toFixed(1) : '0';
+			const dynWinEl = document.getElementById('dyn-winrate');
+			if (dynWinEl) dynWinEl.innerText = `${winrate}%`;
+
+			const dynPeakEl = document.getElementById('dyn-peak-rank');
+			if (dynPeakEl) dynPeakEl.innerText = peakAcc.rank || 'UNRANKED';
+		});
+	</script>
+</Layout>

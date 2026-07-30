@@ -6,3 +6,6 @@ dist/
 test_*.js
 find_emblems.js
 search_cdragon.js
+
+# Local Netlify folder
+.netlify

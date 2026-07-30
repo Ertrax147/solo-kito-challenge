@@ -31,7 +31,7 @@ export async function GET({ request }) {
 
   const regConfig = platformMap[region] || platformMap['LAS'];
 
-  // Query Official Riot Games API (v4 by PUUID)
+  // Consultar la API oficial de Riot Games (v4 por PUUID)
   if (apiKey) {
     try {
       const accountUrl = `https://${regConfig.regional}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}?api_key=${apiKey}`;
@@ -40,12 +40,12 @@ export async function GET({ request }) {
       if (accRes.ok) {
         const accData = await accRes.json();
 
-        // 2. Summoner data (Icon & Level)
+        // 2. Datos del invocador (Ícono y Nivel)
         const summonerUrl = `https://${regConfig.platform}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${accData.puuid}?api_key=${apiKey}`;
         const sumRes = await fetch(summonerUrl);
         const sumData = sumRes.ok ? await sumRes.json() : {};
 
-        // 3. League entries by PUUID
+        // 3. Entradas de liga por PUUID
         const leagueUrl = `https://${regConfig.platform}.api.riotgames.com/lol/league/v4/entries/by-puuid/${accData.puuid}?api_key=${apiKey}`;
         const leagueRes = await fetch(leagueUrl);
 
@@ -70,6 +70,7 @@ export async function GET({ request }) {
             source: 'Riot Games Official API',
             name: accData.gameName || gameName,
             tag: `#${accData.tagLine || tagLine}`,
+            puuid: accData.puuid,
             tier: tierFormatted,
             lp: soloQ.leaguePoints || 0,
             wins: wins,
@@ -80,19 +81,19 @@ export async function GET({ request }) {
           }), {
             headers: { 
               'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin': '*'
+              'Access-Control-Allow-Origin': '*',
+              'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60'
             }
           });
         }
       }
-    } catch (err) {
-      console.error('Riot API error:', err);
-    }
+      // Ignorar error y usar la respuesta alternativa por defecto
+    } catch (err) {}
   }
 
-  // Graceful fallback for unranked / unknown accounts
+  // Respuesta alternativa (fallback) para cuentas sin clasificar / desconocidas o si se alcanza el límite de peticiones
   return new Response(JSON.stringify({
-    success: true,
+    success: false,
     source: 'Default Unranked',
     name: gameName,
     tag: `#${tagLine}`,
