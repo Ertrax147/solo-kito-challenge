@@ -65,7 +65,7 @@
 			</div>
 
 			<!-- Add Account Button -->
-			<button id="open-add-modal-btn" class="flex items-center gap-1.5 bg-[#E9FF1F] text-slate-950 font-black text-xs px-4 py-2 rounded-xl hover:brightness-110 transition-all shadow-md shadow-yellow-500/10">
+			<button id="open-add-modal-btn" class="flex items-center gap-1.5 bg-[#E9FF1F] text-slate-950 font-black text-xs px-4 py-2 rounded-xl hover:brightness-110 transition-all shadow-md shadow-yellow-500/10 shrink-0">
 				<span class="text-sm">+</span>
 				<span>Agregar Cuenta</span>
 			</button>
@@ -75,11 +75,11 @@
 	<!-- Leaderboard Table Container (Replica SoloQ Challenge) -->
 	<div class="bg-[#0b0c10] border border-slate-800/80 rounded-2xl overflow-hidden shadow-2xl">
 		<div class="overflow-x-auto">
-			<table class="w-full text-left border-collapse">
+			<table class="w-full text-left border-collapse min-w-[700px]">
 				<thead>
 					<tr class="bg-[#08090d] text-slate-400 text-[11px] font-extrabold uppercase border-b border-slate-800/80 tracking-wider">
 						<th class="py-3 px-4 w-14">#</th>
-						<th class="py-3 px-4">Jugador / Streamer</th>
+						<th class="py-3 px-4 min-w-[200px]">Jugador / Streamer</th>
 						<th class="py-3 px-4 text-center w-16">Rol</th>
 						<th class="py-3 px-4 w-36">Elo</th>
 						<th class="py-3 px-4 w-44">V / D %</th>
@@ -118,13 +118,13 @@
 		<form id="account-form" class="space-y-4">
 			<div>
 				<label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nombre Invocador (Game Name)</label>
-				<input type="text" id="modal-name" required placeholder="Ej: Ertrax, Ergoz o CrixxD" class="w-full bg-[#151822] border border-slate-800 focus:border-[#E9FF1F] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none font-semibold" />
+				<input type="text" id="modal-name" required placeholder="Ej: LUCOOOOCK, Ertrax, Ergoz" class="w-full bg-[#151822] border border-slate-800 focus:border-[#E9FF1F] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none font-semibold" />
 			</div>
 
 			<div class="grid grid-cols-2 gap-3">
 				<div>
 					<label class="block text-xs font-bold text-slate-300 uppercase mb-1">Tagline</label>
-					<input type="text" id="modal-tag" required placeholder="Ej: #LAS" class="w-full bg-[#151822] border border-slate-800 focus:border-[#E9FF1F] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none font-semibold" />
+					<input type="text" id="modal-tag" required placeholder="Ej: #LAS o #6XX" class="w-full bg-[#151822] border border-slate-800 focus:border-[#E9FF1F] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none font-semibold" />
 				</div>
 				<div>
 					<label class="block text-xs font-bold text-slate-300 uppercase mb-1">Región</label>
@@ -220,10 +220,46 @@
 			isLive: true,
 			profileIconUrl: 'https://ddragon.leagueoflegends.com/cdn/16.15.1/img/profileicon/4655.png',
 			opggUrl: 'https://www.op.gg/summoners/las/CrixxD-LAS'
+		},
+		{
+			id: '4',
+			name: 'LUCOOOOCK',
+			tag: '#LAS',
+			region: 'LAS',
+			role: 'MID',
+			rank: 'UNRANKED',
+			lp: 0,
+			wins: 0,
+			losses: 0,
+			posDelta: '▲1',
+			avgGain: 28,
+			avgLoss: 14,
+			sparkline: '10,30 25,20 40,15 55,10 70,5',
+			isLive: true,
+			profileIconUrl: FALLBACK_ICON,
+			opggUrl: 'https://www.op.gg/summoners/las/LUCOOOOCK-LAS'
+		},
+		{
+			id: '5',
+			name: 'depredador ápice',
+			tag: '#6XX',
+			region: 'LAS',
+			role: 'MID',
+			rank: 'UNRANKED',
+			lp: 0,
+			wins: 0,
+			losses: 0,
+			posDelta: '▲1',
+			avgGain: 28,
+			avgLoss: 14,
+			sparkline: '10,30 25,20 40,15 55,10 70,5',
+			isLive: true,
+			profileIconUrl: FALLBACK_ICON,
+			opggUrl: 'https://www.op.gg/summoners/las/depredador%20%C3%A1pice-6XX'
 		}
 	];
 
-	const STORAGE_KEY = 'solo_kito_accounts_soloq_style_v3';
+	const STORAGE_KEY = 'solo_kito_accounts_soloq_style_v4';
 
 	function getAccounts() {
 		const stored = localStorage.getItem(STORAGE_KEY);
@@ -232,7 +268,14 @@
 			return DEFAULT_ACCOUNTS;
 		}
 		try {
-			return JSON.parse(stored);
+			const parsed = JSON.parse(stored);
+			// Merge default accounts if missing
+			DEFAULT_ACCOUNTS.forEach(def => {
+				if (!parsed.some(p => p.name.toLowerCase() === def.name.toLowerCase())) {
+					parsed.push(def);
+				}
+			});
+			return parsed;
 		} catch (e) {
 			return DEFAULT_ACCOUNTS;
 		}
@@ -394,20 +437,20 @@
 						${getPositionDisplay(idx, acc.posDelta)}
 					</td>
 
-					<!-- Streamer / Player -->
+					<!-- Streamer / Player (Fixed Mobile Distortion with shrink-0 & aspect-square) -->
 					<td class="py-3 px-4">
-						<div class="flex items-center gap-3">
-							<div class="relative">
-								<img src="${avatar}" onerror="this.onerror=null; this.src='${FALLBACK_ICON}'" class="w-10 h-10 rounded-xl border border-slate-700 object-cover" />
+						<div class="flex items-center gap-3 min-w-[180px]">
+							<div class="relative shrink-0 w-10 h-10">
+								<img src="${avatar}" onerror="this.onerror=null; this.src='${FALLBACK_ICON}'" class="w-10 h-10 rounded-xl border border-slate-700 object-cover shrink-0 aspect-square" />
 								${acc.isLive ? `<span class="absolute -bottom-1 -right-1 bg-emerald-500 text-[9px] font-black text-slate-950 px-1 rounded uppercase tracking-tighter">LIVE</span>` : ''}
 							</div>
-							<div>
-								<div class="flex items-center gap-1.5 font-bold text-white text-sm">
+							<div class="min-w-0">
+								<div class="flex items-center gap-1.5 font-bold text-white text-sm truncate">
 									<span>☆</span>
-									<span class="hover:text-[#E9FF1F] transition-colors cursor-pointer">${acc.name}</span>
-									<span class="text-xs text-[#E9FF1F]">🟢</span>
+									<span class="hover:text-[#E9FF1F] transition-colors cursor-pointer truncate">${acc.name}</span>
+									<span class="text-xs text-[#E9FF1F] shrink-0">🟢</span>
 								</div>
-								<div class="text-[11px] text-slate-500 font-semibold tracking-tight">${acc.name}${acc.tag}</div>
+								<div class="text-[11px] text-slate-500 font-semibold tracking-tight truncate">${acc.name}${acc.tag}</div>
 							</div>
 						</div>
 					</td>
@@ -420,7 +463,7 @@
 					<!-- Elo & Official Rank Emblem Image -->
 					<td class="py-3 px-4">
 						<div class="flex items-center gap-2">
-							<img src="${emblemUrl}" class="w-7 h-7 object-contain drop-shadow-md" alt="${acc.rank}" />
+							<img src="${emblemUrl}" class="w-7 h-7 object-contain drop-shadow-md shrink-0" alt="${acc.rank}" />
 							<div>
 								<div class="font-display font-extrabold text-sm text-white leading-tight">${acc.lp} LP</div>
 								${division ? `<span class="text-[10px] font-black px-1 py-0.2 rounded bg-slate-900 border border-slate-700 text-slate-300">${division}</span>` : ''}
