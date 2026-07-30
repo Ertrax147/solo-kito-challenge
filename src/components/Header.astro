@@ -1,0 +1,108 @@
+---
+---
+
+<header class="border-b border-slate-800/80 bg-[#090d16]/90 backdrop-blur-xl sticky top-0 z-40">
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+		<div class="flex flex-col md:flex-row items-center justify-between gap-4">
+			
+			<!-- Logo & Event Status -->
+			<div class="flex items-center gap-4">
+				<div class="relative flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-[#E9FF1F] via-amber-400 to-yellow-600 p-0.5 shadow-lg shadow-yellow-500/20">
+					<div class="w-full h-full bg-[#090d16] rounded-[10px] flex items-center justify-center font-display font-black text-2xl text-[#E9FF1F] tracking-tighter">
+						SK
+					</div>
+				</div>
+
+				<div>
+					<div class="flex items-center gap-2">
+						<h1 class="font-display text-2xl sm:text-3xl font-extrabold tracking-wider bg-gradient-to-r from-white via-slate-100 to-yellow-400 bg-clip-text text-transparent uppercase">
+							Solo Kito Challenge
+						</h1>
+						<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 animate-pulse-glow">
+							<span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+							AUTO-REFRESH EN VIVO
+						</span>
+					</div>
+					<p class="text-xs text-slate-400">Sincronización automática de cuentas con estadísticas reales</p>
+				</div>
+			</div>
+
+			<!-- Quick Global Stats Banner + Riot Key Config -->
+			<div class="flex items-center gap-2 sm:gap-4">
+				<div class="flex items-center gap-2 sm:gap-4 bg-slate-900/90 border border-slate-800/80 rounded-xl p-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm">
+					<div class="text-center px-2 border-r border-slate-800">
+						<div class="text-slate-400 text-[10px] sm:text-xs uppercase font-medium">Cuentas</div>
+						<div class="font-display text-base sm:text-lg font-bold text-yellow-400" id="global-accounts-count">2</div>
+					</div>
+
+					<div class="text-center px-2 border-r border-slate-800">
+						<div class="text-slate-400 text-[10px] sm:text-xs uppercase font-medium">Winrate Global</div>
+						<div class="font-display text-base sm:text-lg font-bold text-emerald-400" id="global-winrate">58.6%</div>
+					</div>
+
+					<div class="text-center px-2 border-r border-slate-800">
+						<div class="text-slate-400 text-[10px] sm:text-xs uppercase font-medium">Peak Elo</div>
+						<div class="font-display text-base sm:text-lg font-bold text-amber-300" id="global-peak-rank">Diamond IV</div>
+					</div>
+
+					<div class="text-center px-2">
+						<div class="text-slate-400 text-[10px] sm:text-xs uppercase font-medium">Partidas</div>
+						<div class="font-display text-base sm:text-lg font-bold text-cyan-400" id="global-total-games">130</div>
+					</div>
+				</div>
+
+				<!-- Riot API Key config button -->
+				<button id="open-key-modal-btn" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-bold px-3 py-2.5 rounded-xl flex items-center gap-1.5 transition-all" title="Configurar clave oficial de Riot API">
+					<span>🔑</span>
+					<span class="hidden sm:inline">Riot API Key</span>
+				</button>
+			</div>
+
+		</div>
+	</div>
+</header>
+
+<!-- MODAL RIOT API KEY -->
+<div id="key-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-200">
+	<div class="glass-panel w-full max-w-md rounded-2xl p-6 shadow-2xl border border-slate-700/80 relative">
+		<button id="close-key-modal-btn" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg">
+			✕
+		</button>
+		<h3 class="font-display text-2xl font-bold text-white mb-2">Clave Oficial de Riot API</h3>
+		<p class="text-xs text-slate-300 mb-4 leading-relaxed">
+			Para obtener actualizaciones 100% directas de los servidores oficiales de Riot Games, puedes ingresar tu <a href="https://developer.riotgames.com/" target="_blank" class="text-cyan-400 underline font-bold">Riot API Key (gratis aquí)</a>.
+		</p>
+		<input type="text" id="riot-api-key-input" placeholder="RGAPI-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" class="w-full bg-slate-900 border border-slate-800 focus:border-[#E9FF1F] rounded-xl px-3.5 py-2.5 text-xs text-white outline-none mb-4 font-mono" />
+		<div class="flex justify-end gap-2">
+			<button id="save-key-btn" class="bg-[#E9FF1F] text-slate-950 font-bold text-xs px-5 py-2 rounded-xl">
+				Guardar Clave
+			</button>
+		</div>
+	</div>
+</div>
+
+<script>
+	const keyModal = document.getElementById('key-modal');
+	const openKeyBtn = document.getElementById('open-key-modal-btn');
+	const closeKeyBtn = document.getElementById('close-key-modal-btn');
+	const saveKeyBtn = document.getElementById('save-key-btn');
+	const keyInput = document.getElementById('riot-api-key-input') as HTMLInputElement;
+
+	openKeyBtn?.addEventListener('click', () => {
+		const storedKey = localStorage.getItem('riot_api_key_v1') || '';
+		if (keyInput) keyInput.value = storedKey;
+		keyModal?.classList.remove('opacity-0', 'pointer-events-none');
+	});
+
+	closeKeyBtn?.addEventListener('click', () => {
+		keyModal?.classList.add('opacity-0', 'pointer-events-none');
+	});
+
+	saveKeyBtn?.addEventListener('click', () => {
+		const newKey = keyInput.value.trim();
+		localStorage.setItem('riot_api_key_v1', newKey);
+		keyModal?.classList.add('opacity-0', 'pointer-events-none');
+		alert('✅ Clave de Riot API guardada. Todas las cuentas se actualizarán directamente desde Riot Games.');
+		if ((window as any).refreshAllAccounts) (window as any).refreshAllAccounts();
+	});
+</script>

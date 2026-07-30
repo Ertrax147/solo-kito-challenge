@@ -1,0 +1,34 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Leaderboard from '../components/Leaderboard.astro';
+import BlueShellWheel from '../components/BlueShellWheel.astro';
+import GoalsTracker from '../components/GoalsTracker.astro';
+---
+
+<Layout title="Solo Kito Challenge — Clasificación y Cuentas de LoL">
+	<!-- Header -->
+	<Header />
+
+	<!-- Main Body -->
+	<main class="flex-1 space-y-4 pb-16">
+		<!-- Accounts Leaderboard (Grid & Table View + Form Modals) -->
+		<Leaderboard />
+
+		<!-- Blue Shell Challenge Wheel -->
+		<BlueShellWheel />
+
+		<!-- Goals and Achievements Tracker -->
+		<GoalsTracker />
+	</main>
+
+	<!-- Footer -->
+	<footer class="border-t border-slate-800/80 bg-slate-950/80 py-8 text-center text-xs text-slate-500">
+		<div class="max-w-7xl mx-auto px-4">
+			<p class="font-display text-sm font-bold text-slate-400 mb-1">
+				SOLO KITO CHALLENGE • INSPIRADO EN SOLOQCHALLENGE.GG
+			</p>
+			<p>Creado para seguir y competir con múltiples cuentas de League of Legends en directo.</p>
+		</div>
+	</footer>
+</Layout>

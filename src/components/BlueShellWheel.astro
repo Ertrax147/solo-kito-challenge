@@ -1,0 +1,142 @@
+---
+---
+
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-slate-800/80">
+	<div class="glass-panel rounded-3xl p-6 sm:p-8 relative overflow-hidden bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-slate-950 border-cyan-500/20">
+		<!-- Background Glow -->
+		<div class="absolute -right-20 -bottom-20 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+		<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+			
+			<!-- Left Description & Controls -->
+			<div class="lg:col-span-5 space-y-4">
+				<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-wider">
+					<span>🐢 Sistema Blue Shell Kito</span>
+				</div>
+				<h2 class="font-display text-3xl sm:text-4xl font-extrabold text-white tracking-wide">
+					¿Te toca Sabotaje o Desafío?
+				</h2>
+				<p class="text-sm text-slate-300 leading-relaxed">
+					Tal como en el SoloQ Challenge original, gira la ruleta antes de tu siguiente partida para aplicar una regla especial o un desafío extra a tus cuentas de Kito.
+				</p>
+
+				<!-- Result Display Banner -->
+				<div id="challenge-result-box" class="hidden bg-slate-950/90 border-2 border-[#E9FF1F] rounded-2xl p-5 shadow-xl shadow-yellow-500/10 animate-pulse-glow">
+					<div class="text-[10px] uppercase font-bold tracking-widest text-yellow-400 mb-1">🔥 Tu Desafío Activo</div>
+					<div id="challenge-title" class="font-display font-extrabold text-xl sm:text-2xl text-white mb-1">
+						--
+					</div>
+					<p id="challenge-desc" class="text-xs text-slate-300">
+						--
+					</p>
+				</div>
+
+				<!-- Spin Action Button -->
+				<div>
+					<button id="spin-wheel-btn" class="w-full sm:w-auto bg-gradient-to-r from-cyan-400 via-teal-400 to-[#E9FF1F] text-slate-950 font-black text-base px-8 py-4 rounded-2xl hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-cyan-500/20 flex items-center justify-center gap-3">
+						<span class="text-xl">🎲</span>
+						<span>GIRAR RUEDA BLUE SHELL</span>
+					</button>
+				</div>
+			</div>
+
+			<!-- Right Interactive Wheel Display -->
+			<div class="lg:col-span-7 flex flex-col items-center justify-center">
+				<div class="relative w-72 h-72 sm:w-80 sm:h-80 flex items-center justify-center">
+					<!-- Wheel Pointer -->
+					<div class="absolute -top-3 left-1/2 -translate-x-1/2 z-20 w-6 h-8 text-yellow-400 drop-shadow-md">
+						<svg class="w-full h-full fill-current" viewBox="0 0 24 24">
+							<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" transform="rotate(180 12 12)"/>
+						</svg>
+					</div>
+
+					<!-- Rotating Circle SVG -->
+					<div id="wheel-circle" class="w-full h-full rounded-full border-4 border-cyan-500/40 bg-slate-900 p-2 shadow-2xl transition-all duration-[4000ms] cubic-bezier(0.15, 0.9, 0.2, 1) flex items-center justify-center relative overflow-hidden">
+						<div class="absolute inset-0 bg-[conic-gradient(from_0deg,#0f172a_0deg_45deg,#1e293b_45deg_90deg,#0f172a_90deg_135deg,#1e293b_135deg_180deg,#0f172a_180deg_225deg,#1e293b_225deg_270deg,#0f172a_270deg_315deg,#1e293b_315deg_360deg)]"></div>
+						
+						<!-- Center Hub -->
+						<div class="w-20 h-20 rounded-full bg-slate-950 border-2 border-cyan-400 z-10 flex items-center justify-center font-display font-extrabold text-cyan-300 text-sm shadow-inner">
+							KITO
+						</div>
+
+						<!-- Items Text around -->
+						<div class="absolute inset-0 p-4 text-[10px] font-bold text-slate-300 flex items-center justify-center pointer-events-none">
+							<div class="absolute top-3 font-display">NO FLASH</div>
+							<div class="absolute right-3 font-display">PICK OFF-META</div>
+							<div class="absolute bottom-3 font-display">1 VS 1 MID</div>
+							<div class="absolute left-3 font-display">MUTE ALL</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</section>
+
+<script>
+	const CHALLENGES = [
+		{
+			title: '🚫 PROHIBIDO USAR FLASH',
+			desc: 'En tu próxima partida tienes estrictamente prohibido equipar o presionar el hechizo Flash. Toca jugar con Teleport/Ignite o Ghost.'
+		},
+		{
+			title: '💥 PICK FORZADO OFF-META',
+			desc: 'Debes elegir un campeón completamente fuera de su rol usual (ejemplo: Yuumi Mid, Soraka Top o ChoGath ADC).'
+		},
+		{
+			title: '🔇 SILENCIO ABSOLUTO (MUTE ALL)',
+			desc: 'Mutear el chat y los pings de aliados y enemigos antes del segundo 0:00 de partida. Juego enfocado al 100%.'
+		},
+		{
+			title: '🩸 PRIMERA SANGRE O PENALTY',
+			desc: 'Debes participar (Kill o Asistencia) en la Primera Sangre de la partida. Si el equipo rival la consigue primero, resta 20 LP ficticios.'
+		},
+		{
+			title: '🛡️ MODO RETO SIN BOTAS',
+			desc: 'Queda prohibido comprar cualquier tipo de botas durante los primeros 20 minutos de juego.'
+		},
+		{
+			title: '⚔️ JUGAR CON TU PEOR CAMPEÓN',
+			desc: 'Revisa tu historial y debes pickear obligatoriamente el campeón con el que tengas menor winrate este mes.'
+		}
+	];
+
+	const spinBtn = document.getElementById('spin-wheel-btn');
+	const wheelCircle = document.getElementById('wheel-circle');
+	const resultBox = document.getElementById('challenge-result-box');
+	const challengeTitle = document.getElementById('challenge-title');
+	const challengeDesc = document.getElementById('challenge-desc');
+
+	let currentRotation = 0;
+
+	spinBtn?.addEventListener('click', () => {
+		spinBtn.setAttribute('disabled', 'true');
+		spinBtn.classList.add('opacity-70', 'cursor-not-allowed');
+
+		// Calculate random rotation (5 to 8 full spins + random slice angle)
+		const extraSpins = 360 * (5 + Math.floor(Math.random() * 4));
+		const randomAngle = Math.floor(Math.random() * 360);
+		currentRotation += extraSpins + randomAngle;
+
+		if (wheelCircle) {
+			wheelCircle.style.transform = `rotate(${currentRotation}deg)`;
+		}
+
+		// Wait for animation completion (4000ms)
+		setTimeout(() => {
+			const randomIndex = Math.floor(Math.random() * CHALLENGES.length);
+			const challenge = CHALLENGES[randomIndex];
+
+			if (challengeTitle) challengeTitle.textContent = challenge.title;
+			if (challengeDesc) challengeDesc.textContent = challenge.desc;
+
+			if (resultBox) {
+				resultBox.classList.remove('hidden');
+			}
+
+			spinBtn.removeAttribute('disabled');
+			spinBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+		}, 4000);
+	});
+</script>

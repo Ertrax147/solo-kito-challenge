@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.astro/
+.env
+*.log
+test_*.js
+find_emblems.js
+search_cdragon.js

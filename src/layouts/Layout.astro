@@ -1,0 +1,53 @@
+---
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const { 
+	title = "Solo Kito Challenge — El Desafío SoloQ", 
+	description = "Sigue la clasificación en vivo, progreso de LP y los retos de todas las cuentas de Kito en League of Legends." 
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es" class="dark">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		
+		<!-- SEO & Social Meta Tags -->
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<meta name="theme-color" content="#E9FF1F" />
+
+		<!-- OpenGraph / Discord Embeds -->
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:site_name" content="Solo Kito Challenge" />
+		<meta name="twitter:card" content="summary_large_image" />
+
+		<!-- Fonts: Outfit (UI) & Rajdhani (Numbers / Gaming Headers) -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+	</head>
+	<body class="bg-[#07090e] text-slate-100 font-sans min-h-screen selection:bg-[#E9FF1F] selection:text-black antialiased overflow-x-hidden">
+		<!-- Dynamic Hextech Background Effects -->
+		<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+			<div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-cyan-600/10 rounded-full blur-[140px]"></div>
+			<div class="absolute top-1/3 -right-40 w-[500px] h-[500px] bg-yellow-500/10 rounded-full blur-[160px]"></div>
+			<div class="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[150px]"></div>
+			<div class="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:32px_32px] opacity-20"></div>
+		</div>
+
+		<!-- Main Container -->
+		<div class="relative z-10 flex flex-col min-h-screen">
+			<slot />
+		</div>
+	</body>
+</html>

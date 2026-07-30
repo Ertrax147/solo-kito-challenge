@@ -1,0 +1,637 @@
+---
+---
+
+<section class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-6">
+	
+	<!-- Top Navigation Filters Bar (Matched to SoloQ Challenge) -->
+	<div class="flex flex-col lg:flex-row items-center justify-between gap-4 mb-6 bg-[#0e1017] p-3 rounded-2xl border border-slate-800/80">
+		
+		<!-- Left Category Tabs & Search -->
+		<div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+			<!-- High/Low Elo Tabs -->
+			<div class="flex items-center bg-[#151822] p-1 rounded-xl border border-slate-800">
+				<button id="tab-todos" class="px-3.5 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all">
+					TODOS
+				</button>
+				<button id="tab-high" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all">
+					HIGH ELO
+				</button>
+				<button id="tab-low" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all">
+					LOW ELO
+				</button>
+			</div>
+
+			<!-- Search Bar -->
+			<div class="relative flex-1 sm:w-60">
+				<input 
+					type="text" 
+					id="search-player"
+					placeholder="Buscar jugador..."
+					class="w-full bg-[#151822] border border-slate-800 focus:border-[#E9FF1F] rounded-xl px-3.5 py-2 pl-9 text-xs text-white outline-none transition-all placeholder:text-slate-500 font-semibold"
+				/>
+				<svg class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+				</svg>
+			</div>
+
+			<!-- Quick Status Filters -->
+			<button id="filter-live" class="px-3 py-1.5 rounded-xl bg-[#151822] border border-slate-800 text-xs font-bold text-slate-300 hover:text-emerald-400 flex items-center gap-1.5">
+				<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+				LIVE
+			</button>
+		</div>
+
+		<!-- Right Role Icons Filter Bar -->
+		<div class="flex items-center gap-2 w-full lg:w-auto justify-between lg:justify-end">
+			<div class="flex items-center gap-1 bg-[#151822] p-1 rounded-xl border border-slate-800" id="role-buttons-container">
+				<button data-role="all" class="role-btn px-3 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all">
+					TODOS
+				</button>
+				<button data-role="TOP" class="role-btn p-2 rounded-lg text-slate-400 hover:text-yellow-400 transition-all" title="TOP">
+					<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+				</button>
+				<button data-role="JG" class="role-btn p-2 rounded-lg text-slate-400 hover:text-yellow-400 transition-all" title="JUNGLE">
+					<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z"/><circle cx="12" cy="12" r="3"/></svg>
+				</button>
+				<button data-role="MID" class="role-btn p-2 rounded-lg text-slate-400 hover:text-yellow-400 transition-all" title="MID">
+					<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l9 4-9 4-9-4 9-4zm0 8l9 4-9 4-9-4 9-4zm0 8l9 4-9 4-9-4 9-4z"/></svg>
+				</button>
+				<button data-role="ADC" class="role-btn p-2 rounded-lg text-slate-400 hover:text-yellow-400 transition-all" title="ADC">
+					<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12"/></svg>
+				</button>
+				<button data-role="SUP" class="role-btn p-2 rounded-lg text-slate-400 hover:text-yellow-400 transition-all" title="SUPPORT">
+					<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+				</button>
+			</div>
+
+			<!-- Add Account Button -->
+			<button id="open-add-modal-btn" class="flex items-center gap-1.5 bg-[#E9FF1F] text-slate-950 font-black text-xs px-4 py-2 rounded-xl hover:brightness-110 transition-all shadow-md shadow-yellow-500/10">
+				<span class="text-sm">+</span>
+				<span>Agregar Cuenta</span>
+			</button>
+		</div>
+	</div>
+
+	<!-- Leaderboard Table Container (Replica SoloQ Challenge) -->
+	<div class="bg-[#0b0c10] border border-slate-800/80 rounded-2xl overflow-hidden shadow-2xl">
+		<div class="overflow-x-auto">
+			<table class="w-full text-left border-collapse">
+				<thead>
+					<tr class="bg-[#08090d] text-slate-400 text-[11px] font-extrabold uppercase border-b border-slate-800/80 tracking-wider">
+						<th class="py-3 px-4 w-14">#</th>
+						<th class="py-3 px-4">Jugador / Streamer</th>
+						<th class="py-3 px-4 text-center w-16">Rol</th>
+						<th class="py-3 px-4 w-36">Elo</th>
+						<th class="py-3 px-4 w-44">V / D %</th>
+						<th class="py-3 px-4 w-32">Racha</th>
+						<th class="py-3 px-4 text-center w-24">±LP</th>
+						<th class="py-3 px-4 text-center w-24">Stats</th>
+						<th class="py-3 px-4 text-right w-12"></th>
+					</tr>
+				</thead>
+				<tbody id="leaderboard-table-body" class="divide-y divide-slate-800/40 text-xs font-sans">
+					<!-- Rows dynamically populated -->
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+</section>
+
+<!-- MODAL: ADD ACCOUNT -->
+<div id="account-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-200">
+	<div class="glass-panel w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-700/80 relative">
+		<button id="close-modal-btn" class="absolute top-5 right-5 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+			✕
+		</button>
+
+		<div class="flex items-center gap-3 mb-4">
+			<div class="w-10 h-10 rounded-xl bg-[#E9FF1F]/10 border border-[#E9FF1F]/30 flex items-center justify-center text-xl text-[#E9FF1F]">
+				⚡
+			</div>
+			<div>
+				<h3 class="font-display text-2xl font-black text-white tracking-wide">Agregar Cuenta</h3>
+				<p class="text-xs text-slate-400">Rango, LP, Winrate y Racha reales de Riot Games</p>
+			</div>
+		</div>
+
+		<form id="account-form" class="space-y-4">
+			<div>
+				<label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nombre Invocador (Game Name)</label>
+				<input type="text" id="modal-name" required placeholder="Ej: Ertrax, Ergoz o CrixxD" class="w-full bg-[#151822] border border-slate-800 focus:border-[#E9FF1F] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none font-semibold" />
+			</div>
+
+			<div class="grid grid-cols-2 gap-3">
+				<div>
+					<label class="block text-xs font-bold text-slate-300 uppercase mb-1">Tagline</label>
+					<input type="text" id="modal-tag" required placeholder="Ej: #LAS" class="w-full bg-[#151822] border border-slate-800 focus:border-[#E9FF1F] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none font-semibold" />
+				</div>
+				<div>
+					<label class="block text-xs font-bold text-slate-300 uppercase mb-1">Región</label>
+					<select id="modal-region" class="w-full bg-[#151822] border border-slate-800 focus:border-[#E9FF1F] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none font-semibold">
+						<option value="LAS">LAS</option>
+						<option value="LAN">LAN</option>
+						<option value="EUW">EUW</option>
+						<option value="NA">NA</option>
+						<option value="KR">KR</option>
+						<option value="BR">BR</option>
+					</select>
+				</div>
+			</div>
+
+			<div>
+				<label class="block text-xs font-bold text-slate-300 uppercase mb-1">Rol Principal</label>
+				<select id="modal-role" class="w-full bg-[#151822] border border-slate-800 focus:border-[#E9FF1F] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none font-semibold">
+					<option value="MID">MID</option>
+					<option value="TOP">TOP</option>
+					<option value="JG">JUNGLE</option>
+					<option value="ADC">ADC</option>
+					<option value="SUP">SUPPORT</option>
+				</select>
+			</div>
+
+			<div class="pt-2 flex justify-end gap-3">
+				<button type="button" id="cancel-modal-btn" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-800">
+					Cancelar
+				</button>
+				<button type="submit" id="modal-submit-btn" class="px-6 py-2.5 rounded-xl text-xs font-black text-slate-950 bg-[#E9FF1F] hover:brightness-110 shadow-lg shadow-yellow-500/20 flex items-center gap-2">
+					<span id="submit-spinner" class="hidden animate-spin">⏳</span>
+					<span>Guardar Cuenta</span>
+				</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script>
+	const FALLBACK_ICON = 'https://ddragon.leagueoflegends.com/cdn/16.15.1/img/profileicon/29.png';
+
+	const DEFAULT_ACCOUNTS = [
+		{
+			id: '1',
+			name: 'Ergoz',
+			tag: '#LAS',
+			region: 'LAS',
+			role: 'MID',
+			rank: 'DIAMOND IV',
+			lp: 12,
+			wins: 50,
+			losses: 36,
+			posDelta: '▲2',
+			avgGain: 25,
+			avgLoss: 18,
+			sparkline: '10,25 25,15 40,25 55,10 70,12',
+			isLive: false,
+			profileIconUrl: 'https://ddragon.leagueoflegends.com/cdn/16.15.1/img/profileicon/6879.png',
+			opggUrl: 'https://www.op.gg/summoners/las/Ergoz-LAS'
+		},
+		{
+			id: '2',
+			name: 'Ertrax',
+			tag: '#LAS',
+			region: 'LAS',
+			role: 'MID',
+			rank: 'EMERALD III',
+			lp: 21,
+			wins: 21,
+			losses: 11,
+			posDelta: '▲1',
+			avgGain: 30,
+			avgLoss: 12,
+			sparkline: '10,35 25,30 40,20 55,10 70,5',
+			isLive: true,
+			profileIconUrl: 'https://ddragon.leagueoflegends.com/cdn/16.15.1/img/profileicon/5414.png',
+			opggUrl: 'https://www.op.gg/summoners/las/Ertrax-LAS'
+		},
+		{
+			id: '3',
+			name: 'CrixxD',
+			tag: '#LAS',
+			region: 'LAS',
+			role: 'MID',
+			rank: 'PLATINUM I',
+			lp: 61,
+			wins: 26,
+			losses: 18,
+			posDelta: '-',
+			avgGain: 28,
+			avgLoss: 14,
+			sparkline: '10,30 25,25 40,15 55,20 70,5',
+			isLive: true,
+			profileIconUrl: 'https://ddragon.leagueoflegends.com/cdn/16.15.1/img/profileicon/4655.png',
+			opggUrl: 'https://www.op.gg/summoners/las/CrixxD-LAS'
+		}
+	];
+
+	const STORAGE_KEY = 'solo_kito_accounts_soloq_style_v3';
+
+	function getAccounts() {
+		const stored = localStorage.getItem(STORAGE_KEY);
+		if (!stored) {
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_ACCOUNTS));
+			return DEFAULT_ACCOUNTS;
+		}
+		try {
+			return JSON.parse(stored);
+		} catch (e) {
+			return DEFAULT_ACCOUNTS;
+		}
+	}
+
+	function saveAccounts(accs) {
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(accs));
+		render();
+	}
+
+	function getRankEmblemUrl(rankStr) {
+		const r = (rankStr || '').toLowerCase();
+		let tier = 'unranked';
+		if (r.includes('challenger')) tier = 'challenger';
+		else if (r.includes('grandmaster')) tier = 'grandmaster';
+		else if (r.includes('master')) tier = 'master';
+		else if (r.includes('diamond')) tier = 'diamond';
+		else if (r.includes('emerald')) tier = 'emerald';
+		else if (r.includes('platinum')) tier = 'platinum';
+		else if (r.includes('gold')) tier = 'gold';
+		else if (r.includes('silver')) tier = 'silver';
+		else if (r.includes('bronze')) tier = 'bronze';
+		else if (r.includes('iron')) tier = 'iron';
+
+		return `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/${tier}.png`;
+	}
+
+	function getDivisionBadge(rankStr) {
+		const parts = (rankStr || '').split(' ');
+		return parts[1] || '';
+	}
+
+	function getEloScore(acc) {
+		const tierScores = {
+			'CHALLENGER': 1000000,
+			'GRANDMASTER': 900000,
+			'MASTER': 800000,
+			'DIAMOND': 700000,
+			'EMERALD': 600000,
+			'PLATINUM': 500000,
+			'GOLD': 400000,
+			'SILVER': 300000,
+			'BRONZE': 200000,
+			'IRON': 100000,
+			'UNRANKED': 0
+		};
+
+		const divScores = {
+			'I': 4000,
+			'II': 3000,
+			'III': 2000,
+			'IV': 1000
+		};
+
+		const rankStr = (acc.rank || '').toUpperCase();
+		let baseScore = 0;
+
+		for (const [tier, score] of Object.entries(tierScores)) {
+			if (rankStr.includes(tier)) {
+				baseScore = score;
+				break;
+			}
+		}
+
+		let divScore = 0;
+		for (const [div, score] of Object.entries(divScores)) {
+			if (rankStr.includes(` ${div}`) || rankStr.endsWith(` ${div}`)) {
+				divScore = score;
+				break;
+			}
+		}
+
+		return baseScore + divScore + (acc.lp || 0);
+	}
+
+	let accounts = getAccounts();
+	let currentRole = 'all';
+	let searchTerm = '';
+	let onlyLive = false;
+	let currentEloFilter = 'all';
+
+	const tableBody = document.getElementById('leaderboard-table-body');
+	const searchInput = document.getElementById('search-player') as HTMLInputElement;
+	const accountModal = document.getElementById('account-modal');
+	const accountForm = document.getElementById('account-form') as HTMLFormElement;
+	const openAddModalBtn = document.getElementById('open-add-modal-btn');
+	const closeModalBtn = document.getElementById('close-modal-btn');
+	const cancelModalBtn = document.getElementById('cancel-modal-btn');
+	const filterLiveBtn = document.getElementById('filter-live');
+
+	function getPositionDisplay(posIndex, delta) {
+		const num = posIndex + 1;
+		let icon = `#${num}`;
+		let colorClass = 'text-white';
+
+		if (num === 1) {
+			icon = `👑`;
+			colorClass = 'text-yellow-400';
+		} else if (num === 2) {
+			icon = `🥈`;
+			colorClass = 'text-slate-300';
+		} else if (num === 3) {
+			icon = `🥉`;
+			colorClass = 'text-[#cd7f32]';
+		}
+
+		return `
+			<div class="flex items-center gap-1 font-display font-black text-xs">
+				<span class="${colorClass}">${icon}</span>
+				<span class="text-[9px] text-emerald-400 font-bold">${delta || '▲1'}</span>
+			</div>
+		`;
+	}
+
+	function getRoleSvg(roleStr) {
+		const role = (roleStr || 'MID').toUpperCase();
+		if (role === 'MID') return `<svg class="w-4 h-4 text-yellow-400 mx-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l9 4-9 4-9-4 9-4zm0 8l9 4-9 4-9-4 9-4zm0 8l9 4-9 4-9-4 9-4z"/></svg>`;
+		if (role === 'TOP') return `<svg class="w-4 h-4 text-yellow-400 mx-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>`;
+		if (role === 'JG') return `<svg class="w-4 h-4 text-yellow-400 mx-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z"/><circle cx="12" cy="12" r="3"/></svg>`;
+		if (role === 'ADC') return `<svg class="w-4 h-4 text-yellow-400 mx-auto" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12"/></svg>`;
+		return `<svg class="w-4 h-4 text-yellow-400 mx-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+	}
+
+	function render() {
+		accounts = getAccounts();
+
+		const filtered = accounts.filter(acc => {
+			const matchesName = acc.name.toLowerCase().includes(searchTerm.toLowerCase()) || acc.tag.toLowerCase().includes(searchTerm.toLowerCase());
+			const matchesRole = currentRole === 'all' || acc.role.toUpperCase() === currentRole.toUpperCase();
+			const matchesLive = !onlyLive || acc.isLive;
+
+			const eloScore = getEloScore(acc);
+			let matchesElo = true;
+			if (currentEloFilter === 'high') {
+				matchesElo = eloScore >= 600000;
+			} else if (currentEloFilter === 'low') {
+				matchesElo = eloScore < 600000;
+			}
+
+			return matchesName && matchesRole && matchesLive && matchesElo;
+		});
+
+		// Sort by ELO Score
+		filtered.sort((a, b) => getEloScore(b) - getEloScore(a));
+
+		tableBody.innerHTML = filtered.map((acc, idx) => {
+			const total = acc.wins + acc.losses;
+			const winrateNum = total > 0 ? Math.round((acc.wins / total) * 100) : 0;
+			const lossrateNum = 100 - winrateNum;
+			const emblemUrl = getRankEmblemUrl(acc.rank);
+			const division = getDivisionBadge(acc.rank);
+			const avatar = acc.profileIconUrl || FALLBACK_ICON;
+			const sparklinePoints = acc.sparkline || '10,30 25,20 40,15 55,10 70,5';
+
+			return `
+				<tr class="hover:bg-[#131622] transition-colors border-b border-slate-800/40">
+					<!-- Position # -->
+					<td class="py-3 px-4">
+						${getPositionDisplay(idx, acc.posDelta)}
+					</td>
+
+					<!-- Streamer / Player -->
+					<td class="py-3 px-4">
+						<div class="flex items-center gap-3">
+							<div class="relative">
+								<img src="${avatar}" onerror="this.onerror=null; this.src='${FALLBACK_ICON}'" class="w-10 h-10 rounded-xl border border-slate-700 object-cover" />
+								${acc.isLive ? `<span class="absolute -bottom-1 -right-1 bg-emerald-500 text-[9px] font-black text-slate-950 px-1 rounded uppercase tracking-tighter">LIVE</span>` : ''}
+							</div>
+							<div>
+								<div class="flex items-center gap-1.5 font-bold text-white text-sm">
+									<span>☆</span>
+									<span class="hover:text-[#E9FF1F] transition-colors cursor-pointer">${acc.name}</span>
+									<span class="text-xs text-[#E9FF1F]">🟢</span>
+								</div>
+								<div class="text-[11px] text-slate-500 font-semibold tracking-tight">${acc.name}${acc.tag}</div>
+							</div>
+						</div>
+					</td>
+
+					<!-- Role Icon -->
+					<td class="py-3 px-4 text-center">
+						${getRoleSvg(acc.role)}
+					</td>
+
+					<!-- Elo & Official Rank Emblem Image -->
+					<td class="py-3 px-4">
+						<div class="flex items-center gap-2">
+							<img src="${emblemUrl}" class="w-7 h-7 object-contain drop-shadow-md" alt="${acc.rank}" />
+							<div>
+								<div class="font-display font-extrabold text-sm text-white leading-tight">${acc.lp} LP</div>
+								${division ? `<span class="text-[10px] font-black px-1 py-0.2 rounded bg-slate-900 border border-slate-700 text-slate-300">${division}</span>` : ''}
+							</div>
+						</div>
+					</td>
+
+					<!-- Exact SoloQ Challenge Style V/D % Bar -->
+					<td class="py-3 px-4">
+						<div class="w-36">
+							<!-- Header Info -->
+							<div class="flex items-center justify-between text-xs mb-1 font-display">
+								<span class="font-black italic text-[#20e682] text-sm tracking-tight">${winrateNum}%</span>
+								<span class="text-xs font-extrabold text-white">
+									${acc.wins}V <span class="text-slate-500">•</span> <span class="text-[#ff4d6d]">${acc.losses}D</span>
+								</span>
+							</div>
+
+							<!-- Dual Skewed Segmented Bar -->
+							<div class="flex items-center gap-1 h-2.5 w-full overflow-hidden">
+								<div 
+									class="h-full bg-[#20e682] rounded-sm transform -skew-x-12 transition-all duration-500" 
+									style="width: ${winrateNum}%;"
+								></div>
+								<div 
+									class="h-full bg-[#8c2538] rounded-sm transform -skew-x-12 transition-all duration-500" 
+									style="width: ${lossrateNum}%;"
+								></div>
+							</div>
+						</div>
+					</td>
+
+					<!-- Racha (Sparkline Trend Graph) -->
+					<td class="py-3 px-4">
+						<div class="w-24 h-8 flex items-center justify-center">
+							<svg class="w-full h-full overflow-visible" viewBox="0 0 80 40">
+								<defs>
+									<linearGradient id="grad-${acc.id}" x1="0%" y1="0%" x2="0%" y2="100%">
+										<stop offset="0%" stop-color="#10B981" stop-opacity="0.4"/>
+										<stop offset="100%" stop-color="#10B981" stop-opacity="0.0"/>
+									</linearGradient>
+								</defs>
+								<polyline
+									fill="none"
+									stroke="#10B981"
+									stroke-width="2.5"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									points="${sparklinePoints}"
+								/>
+								<circle cx="70" cy="5" r="3" fill="#E9FF1F" />
+							</svg>
+						</div>
+					</td>
+
+					<!-- ±LP Gain / Loss -->
+					<td class="py-3 px-4 text-center font-display font-extrabold text-xs">
+						<span class="text-emerald-400">▲${acc.avgGain || 30}</span>
+						<span class="text-rose-400">▼${acc.avgLoss || 10}</span>
+					</td>
+
+					<!-- Stats OP.GG Button -->
+					<td class="py-3 px-4 text-center">
+						<a href="${acc.opggUrl}" target="_blank" class="inline-block bg-[#151822] hover:bg-[#E9FF1F] hover:text-slate-950 text-slate-300 font-display font-black text-[11px] px-3 py-1.5 rounded-lg border border-slate-700/80 transition-all">
+							OP.GG
+						</a>
+					</td>
+
+					<!-- Delete Action -->
+					<td class="py-3 px-4 text-right">
+						<button onclick="window.deleteAccount('${acc.id}')" class="text-slate-500 hover:text-rose-400 p-1" title="Eliminar">
+							🗑️
+						</button>
+					</td>
+				</tr>
+			`;
+		}).join('');
+	}
+
+	// Auto-Refresh
+	async function silentAutoRefreshAll() {
+		const list = getAccounts();
+
+		for (const acc of list) {
+			try {
+				const tagClean = acc.tag.replace('#','');
+				const res = await fetch(`/api/summoner?gameName=${encodeURIComponent(acc.name)}&tagLine=${encodeURIComponent(tagClean)}&region=${acc.region || 'LAS'}`);
+				const data = await res.json();
+
+				if (data.success) {
+					acc.rank = data.tier || acc.rank;
+					acc.lp = data.lp ?? acc.lp;
+					acc.wins = data.wins ?? acc.wins;
+					acc.losses = data.losses ?? acc.losses;
+					acc.profileIconUrl = data.profileIconUrl || acc.profileIconUrl;
+				}
+			} catch(e) {}
+		}
+
+		saveAccounts(list);
+	}
+
+	(window as any).deleteAccount = function(id) {
+		if (confirm('¿Eliminar cuenta de la lista?')) {
+			accounts = accounts.filter(a => a.id !== id);
+			saveAccounts(accounts);
+		}
+	};
+
+	// Role Filters
+	document.querySelectorAll('.role-btn').forEach(btn => {
+		btn.addEventListener('click', () => {
+			document.querySelectorAll('.role-btn').forEach(b => {
+				b.className = 'role-btn p-2 rounded-lg text-slate-400 hover:text-yellow-400 transition-all';
+			});
+			btn.className = 'role-btn px-3 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all';
+			currentRole = (btn as HTMLElement).dataset.role || 'all';
+			render();
+		});
+	});
+
+	// Tab High/Low Elo Filters
+	const tabTodos = document.getElementById('tab-todos');
+	const tabHigh = document.getElementById('tab-high');
+	const tabLow = document.getElementById('tab-low');
+
+	tabTodos?.addEventListener('click', () => {
+		currentEloFilter = 'all';
+		tabTodos.className = 'px-3.5 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all';
+		tabHigh.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all';
+		tabLow.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all';
+		render();
+	});
+
+	tabHigh?.addEventListener('click', () => {
+		currentEloFilter = 'high';
+		tabHigh.className = 'px-3.5 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all';
+		tabTodos.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all';
+		tabLow.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all';
+		render();
+	});
+
+	tabLow?.addEventListener('click', () => {
+		currentEloFilter = 'low';
+		tabLow.className = 'px-3.5 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all';
+		tabTodos.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all';
+		tabHigh.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all';
+		render();
+	});
+
+	filterLiveBtn?.addEventListener('click', () => {
+		onlyLive = !onlyLive;
+		filterLiveBtn.classList.toggle('border-emerald-400', onlyLive);
+		render();
+	});
+
+	searchInput?.addEventListener('input', (e) => {
+		searchTerm = (e.target as HTMLInputElement).value;
+		render();
+	});
+
+	openAddModalBtn?.addEventListener('click', () => {
+		accountForm.reset();
+		accountModal.classList.remove('opacity-0', 'pointer-events-none');
+	});
+
+	closeModalBtn?.addEventListener('click', () => accountModal.classList.add('opacity-0', 'pointer-events-none'));
+	cancelModalBtn?.addEventListener('click', () => accountModal.classList.add('opacity-0', 'pointer-events-none'));
+
+	accountForm?.addEventListener('submit', async (e) => {
+		e.preventDefault();
+
+		const nameInput = document.getElementById('modal-name') as HTMLInputElement;
+		const tagInput = document.getElementById('modal-tag') as HTMLInputElement;
+		const regionInput = document.getElementById('modal-region') as HTMLSelectElement;
+		const roleInput = document.getElementById('modal-role') as HTMLSelectElement;
+
+		const gameName = nameInput.value.trim();
+		const tagClean = tagInput.value.trim().replace('#','');
+
+		let fetchedData: any = {};
+		try {
+			const res = await fetch(`/api/summoner?gameName=${encodeURIComponent(gameName)}&tagLine=${encodeURIComponent(tagClean)}&region=${regionInput.value}`);
+			fetchedData = await res.json();
+		} catch (err) {}
+
+		const newAcc = {
+			id: Date.now().toString(),
+			name: gameName,
+			tag: `#${tagClean}`,
+			region: regionInput.value,
+			role: roleInput.value,
+			rank: fetchedData.tier || 'UNRANKED',
+			lp: fetchedData.lp ?? 0,
+			wins: fetchedData.wins ?? 0,
+			losses: fetchedData.losses ?? 0,
+			posDelta: '▲1',
+			avgGain: 28,
+			avgLoss: 14,
+			sparkline: '10,30 25,20 40,15 55,10 70,5',
+			isLive: true,
+			profileIconUrl: fetchedData.profileIconUrl || FALLBACK_ICON,
+			opggUrl: `https://www.op.gg/summoners/${regionInput.value.toLowerCase()}/${gameName}-${tagClean}`
+		};
+
+		accounts.push(newAcc);
+		saveAccounts(accounts);
+		accountModal.classList.add('opacity-0', 'pointer-events-none');
+	});
+
+	render();
+	silentAutoRefreshAll();
+	setInterval(silentAutoRefreshAll, 30000);
+</script>
