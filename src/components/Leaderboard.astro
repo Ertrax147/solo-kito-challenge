@@ -731,7 +731,9 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 				`;
 
 				try {
-					const res = await fetch(`/api/matches?puuid=${puuid}&region=${region}`);
+					const storedKey = localStorage.getItem('riot_api_key_v1') || '';
+					const apiKeyParam = storedKey ? `&apiKey=${storedKey}` : '';
+					const res = await fetch(`/api/matches?puuid=${puuid}&region=${region}${apiKeyParam}`);
 					const data = await res.json();
 					if (data.success && data.matches.length > 0) {
 						matchesCache.set(id, data); // Guardar en caché
@@ -762,10 +764,13 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 	// Auto-Actualización Silenciosa de Stats en Vivo desde la API de Riot
 	async function silentAutoRefreshAll() {
 		let hasChanges = false;
+		const storedKey = localStorage.getItem('riot_api_key_v1') || '';
+		const apiKeyParam = storedKey ? `&apiKey=${storedKey}` : '';
+		
 		for (const acc of accounts) {
 			try {
 				const tagClean = acc.tag.replace('#','');
-				const res = await fetch(`/api/summoner?gameName=${encodeURIComponent(acc.name)}&tagLine=${encodeURIComponent(tagClean)}&region=${acc.region || 'LAS'}`);
+				const res = await fetch(`/api/summoner?gameName=${encodeURIComponent(acc.name)}&tagLine=${encodeURIComponent(tagClean)}&region=${acc.region || 'LAS'}${apiKeyParam}`);
 				const data = await res.json();
 
 				if (data.success) {
@@ -903,7 +908,9 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 
 		let fetchedData: any = {};
 		try {
-			const res = await fetch(`/api/summoner?gameName=${encodeURIComponent(gameName)}&tagLine=${encodeURIComponent(tagClean)}&region=${regionInput.value}`);
+			const storedKey = localStorage.getItem('riot_api_key_v1') || '';
+			const apiKeyParam = storedKey ? `&apiKey=${storedKey}` : '';
+			const res = await fetch(`/api/summoner?gameName=${encodeURIComponent(gameName)}&tagLine=${encodeURIComponent(tagClean)}&region=${regionInput.value}${apiKeyParam}`);
 			fetchedData = await res.json();
 		} catch (err) {} finally {
 			submitSpinner?.classList.add('hidden');
