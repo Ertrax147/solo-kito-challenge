@@ -74,7 +74,7 @@ async function GET({ request }) {
 				const wins = soloQ.wins || 0;
 				const losses = soloQ.losses || 0;
 				const total = wins + losses;
-				const tierFormatted = soloQ.tier ? `${soloQ.tier} ${soloQ.rank}` : "UNRANKED";
+				const tierFormatted = soloQ.tier ? `${soloQ.tier} ${soloQ.rank}`.trim() : "UNRANKED";
 				const iconId = sumData.profileIconId || 29;
 				return new Response(JSON.stringify({
 					success: true,
@@ -98,15 +98,21 @@ async function GET({ request }) {
 		console.error("Riot API error:", err);
 	}
 	return new Response(JSON.stringify({
-		success: false,
-		error: "No se pudo obtener datos del invocador"
-	}), {
-		status: 404,
-		headers: {
-			"Content-Type": "application/json",
-			"Access-Control-Allow-Origin": "*"
-		}
-	});
+		success: true,
+		source: "Default Unranked",
+		name: gameName,
+		tag: `#${tagLine}`,
+		tier: "UNRANKED",
+		lp: 0,
+		wins: 0,
+		losses: 0,
+		winrate: "0.0",
+		profileIconUrl: `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VER}/img/profileicon/29.png`,
+		opggUrl: `https://www.op.gg/summoners/${region.toLowerCase()}/${gameName}-${tagLine}`
+	}), { headers: {
+		"Content-Type": "application/json",
+		"Access-Control-Allow-Origin": "*"
+	} });
 }
 //#endregion
 //#region \0virtual:astro:page:src/pages/api/summoner@_@js

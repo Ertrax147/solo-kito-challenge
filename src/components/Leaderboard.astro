@@ -259,31 +259,33 @@
 		}
 	];
 
-	const STORAGE_KEY = 'solo_kito_accounts_soloq_style_v4';
+	let accounts = DEFAULT_ACCOUNTS;
+	let currentRole = 'all';
+	let searchTerm = '';
+	let onlyLive = false;
+	let currentEloFilter = 'all';
 
-	function getAccounts() {
-		const stored = localStorage.getItem(STORAGE_KEY);
-		if (!stored) {
-			localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_ACCOUNTS));
-			return DEFAULT_ACCOUNTS;
-		}
+	const tableBody = document.getElementById('leaderboard-table-body');
+	const searchInput = document.getElementById('search-player') as HTMLInputElement;
+	const accountModal = document.getElementById('account-modal');
+	const accountForm = document.getElementById('account-form') as HTMLFormElement;
+	const openAddModalBtn = document.getElementById('open-add-modal-btn');
+	const closeModalBtn = document.getElementById('close-modal-btn');
+	const cancelModalBtn = document.getElementById('cancel-modal-btn');
+	const filterLiveBtn = document.getElementById('filter-live');
+	const submitSpinner = document.getElementById('submit-spinner');
+
+	async function fetchGlobalAccounts() {
 		try {
-			const parsed = JSON.parse(stored);
-			// Merge default accounts if missing
-			DEFAULT_ACCOUNTS.forEach(def => {
-				if (!parsed.some(p => p.name.toLowerCase() === def.name.toLowerCase())) {
-					parsed.push(def);
+			const res = await fetch('/api/accounts');
+			if (res.ok) {
+				const data = await res.json();
+				if (Array.isArray(data) && data.length > 0) {
+					accounts = data;
+					render();
 				}
-			});
-			return parsed;
-		} catch (e) {
-			return DEFAULT_ACCOUNTS;
-		}
-	}
-
-	function saveAccounts(accs) {
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(accs));
-		render();
+			}
+		} catch(e) {}
 	}
 
 	function getRankEmblemUrl(rankStr) {
@@ -351,21 +353,6 @@
 		return baseScore + divScore + (acc.lp || 0);
 	}
 
-	let accounts = getAccounts();
-	let currentRole = 'all';
-	let searchTerm = '';
-	let onlyLive = false;
-	let currentEloFilter = 'all';
-
-	const tableBody = document.getElementById('leaderboard-table-body');
-	const searchInput = document.getElementById('search-player') as HTMLInputElement;
-	const accountModal = document.getElementById('account-modal');
-	const accountForm = document.getElementById('account-form') as HTMLFormElement;
-	const openAddModalBtn = document.getElementById('open-add-modal-btn');
-	const closeModalBtn = document.getElementById('close-modal-btn');
-	const cancelModalBtn = document.getElementById('cancel-modal-btn');
-	const filterLiveBtn = document.getElementById('filter-live');
-
 	function getPositionDisplay(posIndex, delta) {
 		const num = posIndex + 1;
 		let icon = `#${num}`;
@@ -400,8 +387,6 @@
 	}
 
 	function render() {
-		accounts = getAccounts();
-
 		const filtered = accounts.filter(acc => {
 			const matchesName = acc.name.toLowerCase().includes(searchTerm.toLowerCase()) || acc.tag.toLowerCase().includes(searchTerm.toLowerCase());
 			const matchesRole = currentRole === 'all' || acc.role.toUpperCase() === currentRole.toUpperCase();
@@ -437,7 +422,7 @@
 						${getPositionDisplay(idx, acc.posDelta)}
 					</td>
 
-					<!-- Streamer / Player (Fixed Mobile Distortion with shrink-0 & aspect-square) -->
+					<!-- Streamer / Player -->
 					<td class="py-3 px-4">
 						<div class="flex items-center gap-3 min-w-[180px]">
 							<div class="relative shrink-0 w-10 h-10">
@@ -543,11 +528,9 @@
 		}).join('');
 	}
 
-	// Auto-Refresh
+	// Silent Auto-Refresh of Live Stats from Riot API
 	async function silentAutoRefreshAll() {
-		const list = getAccounts();
-
-		for (const acc of list) {
+		for (const acc of accounts) {
 			try {
 				const tagClean = acc.tag.replace('#','');
 				const res = await fetch(`/api/summoner?gameName=${encodeURIComponent(acc.name)}&tagLine=${encodeURIComponent(tagClean)}&region=${acc.region || 'LAS'}`);
@@ -563,13 +546,19 @@
 			} catch(e) {}
 		}
 
-		saveAccounts(list);
+		render();
 	}
 
-	(window as any).deleteAccount = function(id) {
+	(window as any).deleteAccount = async function(id) {
 		if (confirm('¿Eliminar cuenta de la lista?')) {
-			accounts = accounts.filter(a => a.id !== id);
-			saveAccounts(accounts);
+			try {
+				const res = await fetch(`/api/accounts?id=${id}`, { method: 'DELETE' });
+				if (res.ok) {
+					const data = await res.json();
+					if (data.accounts) accounts = data.accounts;
+				}
+			} catch(e) {}
+			render();
 		}
 	};
 
@@ -644,11 +633,15 @@
 		const gameName = nameInput.value.trim();
 		const tagClean = tagInput.value.trim().replace('#','');
 
+		submitSpinner?.classList.remove('hidden');
+
 		let fetchedData: any = {};
 		try {
 			const res = await fetch(`/api/summoner?gameName=${encodeURIComponent(gameName)}&tagLine=${encodeURIComponent(tagClean)}&region=${regionInput.value}`);
 			fetchedData = await res.json();
-		} catch (err) {}
+		} catch (err) {} finally {
+			submitSpinner?.classList.add('hidden');
+		}
 
 		const newAcc = {
 			id: Date.now().toString(),
@@ -666,14 +659,29 @@
 			sparkline: '10,30 25,20 40,15 55,10 70,5',
 			isLive: true,
 			profileIconUrl: fetchedData.profileIconUrl || FALLBACK_ICON,
-			opggUrl: `https://www.op.gg/summoners/${regionInput.value.toLowerCase()}/${gameName}-${tagClean}`
+			opggUrl: `https://www.op.gg/summoners/${regionInput.value.toLowerCase()}/${encodeURIComponent(gameName)}-${tagClean}`
 		};
 
-		accounts.push(newAcc);
-		saveAccounts(accounts);
+		// Save via Live Netlify Blobs API so it persists for ALL users/devices instantly!
+		try {
+			const postRes = await fetch('/api/accounts', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(newAcc)
+			});
+			if (postRes.ok) {
+				const postData = await postRes.json();
+				if (postData.accounts) accounts = postData.accounts;
+			}
+		} catch(e) {
+			accounts.push(newAcc);
+		}
+
+		render();
 		accountModal.classList.add('opacity-0', 'pointer-events-none');
 	});
 
+	fetchGlobalAccounts();
 	render();
 	silentAutoRefreshAll();
 	setInterval(silentAutoRefreshAll, 30000);
