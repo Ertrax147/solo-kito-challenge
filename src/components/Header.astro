@@ -76,11 +76,21 @@
 		keyModal?.classList.add('opacity-0', 'pointer-events-none');
 	});
 
-	saveKeyBtn?.addEventListener('click', () => {
+	saveKeyBtn?.addEventListener('click', async () => {
 		const newKey = keyInput.value.trim();
 		localStorage.setItem('riot_api_key_v1', newKey);
 		keyModal?.classList.add('opacity-0', 'pointer-events-none');
-		alert('✅ Clave de Riot API guardada. Todas las cuentas se actualizarán directamente desde Riot Games.');
+		
+		// Guardar globalmente en la nube (Netlify Blobs) para todos los visitantes
+		try {
+			await fetch('/api/apikey', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ apiKey: newKey })
+			});
+		} catch(e) {}
+
+		alert('✅ Clave de Riot API guardada en la NUBE. A partir de ahora, la página cargará para ti y para todos los visitantes automáticamente sin necesidad de cargar la llave de nuevo.');
 		if ((window as any).refreshAllAccounts) (window as any).refreshAllAccounts();
 	});
 </script>

@@ -11,11 +11,26 @@ const platformMap = {
   'BR': { platform: 'br1', regional: 'americas', name: 'BR' }
 };
 
+import { getStore } from '@netlify/blobs';
+
 export async function GET({ request }) {
   const url = new URL(request.url);
   const puuid = url.searchParams.get('puuid')?.trim();
   const region = (url.searchParams.get('region') || 'LAS').toUpperCase();
-  const apiKey = url.searchParams.get('apiKey')?.trim() || process.env.RIOT_API_KEY || DEFAULT_API_KEY;
+  
+  let apiKey = url.searchParams.get('apiKey')?.trim();
+  
+  if (!apiKey) {
+    try {
+      const store = getStore({ name: 'solo-kito-accounts', consistency: 'strong' });
+      apiKey = await store.get('global_riot_api_key');
+    } catch (err) {}
+  }
+  
+  if (!apiKey) {
+    apiKey = process.env.RIOT_API_KEY || DEFAULT_API_KEY;
+  }
+
   const count = 5; // Mostrar las últimas 5 partidas
 
   if (!puuid) {
