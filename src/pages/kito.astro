@@ -2,7 +2,6 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Leaderboard from '../components/Leaderboard.astro';
-import BlueShellWheel from '../components/BlueShellWheel.astro';
 import GoalsTracker from '../components/GoalsTracker.astro';
 ---
 
@@ -39,9 +38,6 @@ import GoalsTracker from '../components/GoalsTracker.astro';
 
 		<!-- Tabla de Clasificación de Cuentas (Conectada a la API privada kito) -->
 		<Leaderboard apiUrl="/api/kito-accounts" />
-
-		<!-- Ruleta de Retos (Blue Shell) -->
-		<BlueShellWheel />
 
 		<!-- Rastreador de Metas y Logros -->
 		<GoalsTracker />
