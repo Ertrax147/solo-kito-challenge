@@ -1,7 +1,5 @@
 export const prerender = false;
 
-const DEFAULT_API_KEY = 'RGAPI-a6e6ae1e-068c-484d-883d-a7672ab00feb';
-
 const platformMap = {
   'LAS': { platform: 'la2', regional: 'americas', name: 'LAS' },
   'LAN': { platform: 'la1', regional: 'americas', name: 'LAN' },
@@ -11,30 +9,26 @@ const platformMap = {
   'BR': { platform: 'br1', regional: 'americas', name: 'BR' }
 };
 
-import { getStore } from '@netlify/blobs';
+import { resolveApiKey, riotFetch } from '../../lib/riot.js';
 
 export async function GET({ request }) {
   const url = new URL(request.url);
   const puuid = url.searchParams.get('puuid')?.trim();
   const region = (url.searchParams.get('region') || 'LAS').toUpperCase();
-  
-  let apiKey = url.searchParams.get('apiKey')?.trim();
-  
-  if (!apiKey) {
-    try {
-      const store = getStore({ name: 'solo-kito-accounts', consistency: 'strong' });
-      apiKey = await store.get('global_riot_api_key');
-    } catch (err) {}
-  }
-  
-  if (!apiKey) {
-    apiKey = process.env.RIOT_API_KEY || DEFAULT_API_KEY;
-  }
+
+  const apiKey = await resolveApiKey(url);
 
   const count = 5; // Mostrar las últimas 5 partidas
 
   if (!puuid) {
     return new Response(JSON.stringify({ error: 'Falta el puuid del invocador' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+    });
+  }
+
+  if (!apiKey) {
+    return new Response(JSON.stringify({ success: false, error: 'No hay una Riot API Key configurada todavía.' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
     });
@@ -46,8 +40,8 @@ export async function GET({ request }) {
   try {
     // 1. Obtener los IDs de las últimas 5 partidas (filtrado por Solo/Duo queue = 420)
     const idsUrl = `https://${regionalEndpoint}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?queue=420&start=0&count=${count}&api_key=${apiKey}`;
-    const idsRes = await fetch(idsUrl);
-    
+    const idsRes = await riotFetch(idsUrl);
+
     if (idsRes.status === 429) {
       throw new Error('Se excedió el límite de peticiones de Riot (Rate Limit 429). Intenta de nuevo en unos segundos.');
     }
@@ -56,16 +50,17 @@ export async function GET({ request }) {
     }
 
     const matchIds = await idsRes.json();
-    
-    // 2. Obtener detalles de cada partida concurrentemente
-    const matchPromises = matchIds.map(async (matchId) => {
-      const matchUrl = `https://${regionalEndpoint}.api.riotgames.com/lol/match/v5/matches/${matchId}?api_key=${apiKey}`;
-      const matchRes = await fetch(matchUrl);
-      if (!matchRes.ok) return null;
-      return matchRes.json();
-    });
 
-    const matchResults = await Promise.all(matchPromises);
+    // 2. Obtener detalles de cada partida, una por una con un pequeño
+    //    espaciado entre peticiones (en vez de todas a la vez) para no
+    //    generar un pico que dispare el rate limit de Riot.
+    const matchResults = [];
+    for (const matchId of matchIds) {
+      const matchUrl = `https://${regionalEndpoint}.api.riotgames.com/lol/match/v5/matches/${matchId}?api_key=${apiKey}`;
+      const matchRes = await riotFetch(matchUrl);
+      matchResults.push(matchRes.ok ? await matchRes.json() : null);
+      await new Promise(r => setTimeout(r, 80));
+    }
     
     // 3. Formatear la información de las partidas
     const formattedMatches = matchResults.filter(m => m !== null).map((matchData) => {

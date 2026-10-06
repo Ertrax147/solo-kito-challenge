@@ -1,7 +1,6 @@
 export const prerender = false;
 
 const DDRAGON_VER = '16.15.1';
-const DEFAULT_API_KEY = 'RGAPI-a6e6ae1e-068c-484d-883d-a7672ab00feb';
 
 const platformMap = {
   'LAS': { platform: 'la2', regional: 'americas', name: 'LAS' },
@@ -12,26 +11,15 @@ const platformMap = {
   'BR': { platform: 'br1', regional: 'americas', name: 'BR' }
 };
 
-import { getStore } from '@netlify/blobs';
+import { resolveApiKey, riotFetch } from '../../lib/riot.js';
 
 export async function GET({ request }) {
   const url = new URL(request.url);
   const gameName = url.searchParams.get('gameName')?.trim();
   const tagLine = url.searchParams.get('tagLine')?.replace('#', '').trim();
   const region = (url.searchParams.get('region') || 'LAS').toUpperCase();
-  
-  let apiKey = url.searchParams.get('apiKey')?.trim();
-  
-  if (!apiKey) {
-    try {
-      const store = getStore({ name: 'solo-kito-accounts', consistency: 'strong' });
-      apiKey = await store.get('global_riot_api_key');
-    } catch (err) {}
-  }
-  
-  if (!apiKey) {
-    apiKey = process.env.RIOT_API_KEY || DEFAULT_API_KEY;
-  }
+
+  const apiKey = await resolveApiKey(url);
 
   if (!gameName || !tagLine) {
     return new Response(JSON.stringify({ error: 'Falta el nombre de invocador o tag' }), {
@@ -49,19 +37,19 @@ export async function GET({ request }) {
   if (apiKey) {
     try {
       const accountUrl = `https://${regConfig.regional}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}?api_key=${apiKey}`;
-      const accRes = await fetch(accountUrl);
+      const accRes = await riotFetch(accountUrl);
 
       if (accRes.ok) {
         const accData = await accRes.json();
 
         // 2. Datos del invocador (Ícono y Nivel)
         const summonerUrl = `https://${regConfig.platform}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${accData.puuid}?api_key=${apiKey}`;
-        const sumRes = await fetch(summonerUrl);
+        const sumRes = await riotFetch(summonerUrl);
         const sumData = sumRes.ok ? await sumRes.json() : {};
 
         // 3. Entradas de liga por PUUID
         const leagueUrl = `https://${regConfig.platform}.api.riotgames.com/lol/league/v4/entries/by-puuid/${accData.puuid}?api_key=${apiKey}`;
-        const leagueRes = await fetch(leagueUrl);
+        const leagueRes = await riotFetch(leagueUrl);
 
         if (leagueRes.ok) {
           const leagueEntries = await leagueRes.json();
