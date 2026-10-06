@@ -267,9 +267,15 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 			}
 		}
 
+		// Importante: comparar el token exacto (no con includes/substring).
+		// " I" es substring de " II", " III" y " IV", así que comparar con
+		// includes() hacía que cualquier división IV/III/II quedara mal
+		// puntuada como si fuera división I (la más alta).
+		const divisionToken = rankStr.split(' ')[1] || '';
+
 		let divScore = 0;
 		for (const [div, score] of Object.entries(divScores)) {
-			if (rankStr.includes(` ${div}`) || rankStr.endsWith(` ${div}`)) {
+			if (divisionToken === div) {
 				divScore = score;
 				break;
 			}
