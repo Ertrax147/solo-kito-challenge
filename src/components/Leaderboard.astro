@@ -213,6 +213,12 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 		render();
 	}
 
+	// Emblema "sin rango" como SVG embebido: no depende de ninguna red,
+	// se pinta al instante y sirve de fallback si el CDN de abajo falla.
+	const UNRANKED_EMBLEM = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1e293b" stroke="#475569" stroke-width="1"/><text x="12" y="16" font-size="10" font-family="sans-serif" font-weight="700" fill="#64748b" text-anchor="middle">?</text></svg>'
+	);
+
 	function getRankEmblemUrl(rankStr) {
 		const r = (rankStr || '').toLowerCase();
 		let tier = 'unranked';
@@ -227,7 +233,12 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 		else if (r.includes('bronze')) tier = 'bronze';
 		else if (r.includes('iron')) tier = 'iron';
 
-		return `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/${tier}.png`;
+		if (tier === 'unranked') return UNRANKED_EMBLEM;
+
+		// CDN de OP.GG (Akamai): responde en ~100-200ms. El de CommunityDragon
+		// con "latest" tardaba hasta 20 segundos por petición en resolver la
+		// ruta, que era la causa de que los emblemas tardaran "muchísimo".
+		return `https://opgg-static.akamaized.net/images/medals_new/${tier}.png`;
 	}
 
 	function getDivisionBadge(rankStr) {
@@ -396,7 +407,7 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 					<!-- Elo e Imagen de Emblema Oficial -->
 					<td class="py-3 px-4">
 						<div class="flex items-center gap-2">
-							<img src="${emblemUrl}" class="w-7 h-7 object-contain drop-shadow-md shrink-0" alt="${acc.rank}" />
+							<img src="${emblemUrl}" onerror="this.onerror=null; this.src='${UNRANKED_EMBLEM}';" loading="lazy" class="w-7 h-7 object-contain drop-shadow-md shrink-0" alt="${acc.rank}" />
 							<div>
 								<div class="font-display font-extrabold text-sm text-white leading-tight">${acc.lp} LP</div>
 								${division ? `<span class="text-[10px] font-black px-1 py-0.2 rounded bg-slate-900 border border-slate-700 text-slate-300">${division}</span>` : ''}
