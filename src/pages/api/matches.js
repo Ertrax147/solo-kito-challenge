@@ -15,6 +15,8 @@ export async function GET({ request }) {
   const url = new URL(request.url);
   const puuid = url.searchParams.get('puuid')?.trim();
   const region = (url.searchParams.get('region') || 'LAS').toUpperCase();
+  // 420 = Solo/Duo (por defecto), 440 = Flex 5v5
+  const queue = url.searchParams.get('queue') || '420';
 
   const apiKey = await resolveApiKey(url);
 
@@ -38,8 +40,8 @@ export async function GET({ request }) {
   const regionalEndpoint = regConfig.regional;
 
   try {
-    // 1. Obtener los IDs de las últimas 5 partidas (filtrado por Solo/Duo queue = 420)
-    const idsUrl = `https://${regionalEndpoint}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?queue=420&start=0&count=${count}&api_key=${apiKey}`;
+    // 1. Obtener los IDs de las últimas 5 partidas de la cola pedida
+    const idsUrl = `https://${regionalEndpoint}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?queue=${queue}&start=0&count=${count}&api_key=${apiKey}`;
     const idsRes = await riotFetch(idsUrl);
 
     if (idsRes.status === 429) {

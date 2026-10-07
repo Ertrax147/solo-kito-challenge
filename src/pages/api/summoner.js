@@ -53,18 +53,20 @@ export async function GET({ request }) {
 
         if (leagueRes.ok) {
           const leagueEntries = await leagueRes.json();
-          const soloQ = leagueEntries.find(e => e.queueType === 'RANKED_SOLO_5x5') || leagueEntries[0] || {
-            tier: 'UNRANKED',
-            rank: '',
-            leaguePoints: 0,
-            wins: 0,
-            losses: 0
-          };
+          const emptyEntry = { tier: 'UNRANKED', rank: '', leaguePoints: 0, wins: 0, losses: 0 };
+          const soloQ = leagueEntries.find(e => e.queueType === 'RANKED_SOLO_5x5') || emptyEntry;
+          const flexQ = leagueEntries.find(e => e.queueType === 'RANKED_FLEX_SR') || emptyEntry;
 
           const wins = soloQ.wins || 0;
           const losses = soloQ.losses || 0;
           const total = wins + losses;
           const tierFormatted = soloQ.tier ? `${soloQ.tier} ${soloQ.rank}`.trim() : 'UNRANKED';
+
+          const flexWins = flexQ.wins || 0;
+          const flexLosses = flexQ.losses || 0;
+          const flexTotal = flexWins + flexLosses;
+          const flexTierFormatted = flexQ.tier ? `${flexQ.tier} ${flexQ.rank}`.trim() : 'UNRANKED';
+
           const iconId = sumData.profileIconId || 29;
 
           return new Response(JSON.stringify({
@@ -73,11 +75,18 @@ export async function GET({ request }) {
             name: accData.gameName || gameName,
             tag: `#${accData.tagLine || tagLine}`,
             puuid: accData.puuid,
+            // Solo/Duo (cola 420)
             tier: tierFormatted,
             lp: soloQ.leaguePoints || 0,
             wins: wins,
             losses: losses,
             winrate: total > 0 ? ((wins / total) * 100).toFixed(1) : '0.0',
+            // Flex 5v5 (cola 440)
+            flexTier: flexTierFormatted,
+            flexLp: flexQ.leaguePoints || 0,
+            flexWins: flexWins,
+            flexLosses: flexLosses,
+            flexWinrate: flexTotal > 0 ? ((flexWins / flexTotal) * 100).toFixed(1) : '0.0',
             profileIconUrl: `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VER}/img/profileicon/${iconId}.png`,
             opggUrl: `https://www.op.gg/summoners/${region.toLowerCase()}/${gameName}-${tagLine}`
           }), {
@@ -104,6 +113,11 @@ export async function GET({ request }) {
     wins: 0,
     losses: 0,
     winrate: '0.0',
+    flexTier: 'UNRANKED',
+    flexLp: 0,
+    flexWins: 0,
+    flexLosses: 0,
+    flexWinrate: '0.0',
     profileIconUrl: `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VER}/img/profileicon/29.png`,
     opggUrl: `https://www.op.gg/summoners/${region.toLowerCase()}/${gameName}-${tagLine}`
   }), {

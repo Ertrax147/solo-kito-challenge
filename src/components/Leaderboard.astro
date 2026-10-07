@@ -12,6 +12,16 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 		
 		<!-- Pestañas de Categoría y Búsqueda -->
 		<div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+			<!-- Pestañas de Cola: Solo/Duo vs Flex -->
+			<div class="flex items-center bg-[#151822] p-1 rounded-xl border border-slate-800">
+				<button id="tab-queue-solo" class="px-3.5 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all">
+					SOLO/DUO
+				</button>
+				<button id="tab-queue-flex" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all">
+					FLEX
+				</button>
+			</div>
+
 			<!-- Pestañas High/Low Elo -->
 			<div class="flex items-center bg-[#151822] p-1 rounded-xl border border-slate-800">
 				<button id="tab-todos" class="px-3.5 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all">
@@ -189,6 +199,30 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 	let searchTerm = '';
 	let onlyLive = false;
 	let currentEloFilter = 'all';
+	let currentQueue = 'solo'; // 'solo' (420, Solo/Duo) | 'flex' (440, Flex 5v5)
+
+	// Devuelve el rango/lp/wins/losses de la cola actualmente seleccionada,
+	// leyendo los campos "flex*" de la cuenta si currentQueue === 'flex'.
+	function getQueueStats(acc) {
+		if (currentQueue === 'flex') {
+			return {
+				rank: acc.flexRank || 'UNRANKED',
+				lp: acc.flexLp || 0,
+				wins: acc.flexWins || 0,
+				losses: acc.flexLosses || 0
+			};
+		}
+		return {
+			rank: acc.rank || 'UNRANKED',
+			lp: acc.lp || 0,
+			wins: acc.wins || 0,
+			losses: acc.losses || 0
+		};
+	}
+
+	function getQueueId() {
+		return currentQueue === 'flex' ? '440' : '420';
+	}
 
 	const tableBody = document.getElementById('leaderboard-table-body');
 	const searchInput = document.getElementById('search-player') as HTMLInputElement;
@@ -268,7 +302,8 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 			'IV': 1000
 		};
 
-		const rankStr = (acc.rank || '').toUpperCase();
+		const stats = getQueueStats(acc);
+		const rankStr = (stats.rank || '').toUpperCase();
 		let baseScore = 0;
 
 		for (const [tier, score] of Object.entries(tierScores)) {
@@ -292,7 +327,7 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 			}
 		}
 
-		return baseScore + divScore + (acc.lp || 0);
+		return baseScore + divScore + stats.lp;
 	}
 
 	function getPositionDisplay(posIndex, delta) {
@@ -368,11 +403,12 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 		filtered.sort((a, b) => getEloScore(b) - getEloScore(a));
 
 		tableBody.innerHTML = filtered.map((acc, idx) => {
-			const total = acc.wins + acc.losses;
-			const winrateNum = total > 0 ? Math.round((acc.wins / total) * 100) : 0;
+			const stats = getQueueStats(acc);
+			const total = stats.wins + stats.losses;
+			const winrateNum = total > 0 ? Math.round((stats.wins / total) * 100) : 0;
 			const lossrateNum = 100 - winrateNum;
-			const emblemUrl = getRankEmblemUrl(acc.rank);
-			const division = getDivisionBadge(acc.rank);
+			const emblemUrl = getRankEmblemUrl(stats.rank);
+			const division = getDivisionBadge(stats.rank);
 			const avatar = acc.profileIconUrl || FALLBACK_ICON;
 			const sparklinePoints = acc.sparkline || '10,30 25,20 40,15 55,10 70,5';
 
@@ -407,9 +443,9 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 					<!-- Elo e Imagen de Emblema Oficial -->
 					<td class="py-3 px-4">
 						<div class="flex items-center gap-2">
-							<img src="${emblemUrl}" onerror="this.onerror=null; this.src='${UNRANKED_EMBLEM}';" loading="lazy" class="w-7 h-7 object-contain drop-shadow-md shrink-0" alt="${acc.rank}" />
+							<img src="${emblemUrl}" onerror="this.onerror=null; this.src='${UNRANKED_EMBLEM}';" loading="lazy" class="w-7 h-7 object-contain drop-shadow-md shrink-0" alt="${stats.rank}" />
 							<div>
-								<div class="font-display font-extrabold text-sm text-white leading-tight">${acc.lp} LP</div>
+								<div class="font-display font-extrabold text-sm text-white leading-tight">${stats.lp} LP</div>
 								${division ? `<span class="text-[10px] font-black px-1 py-0.2 rounded bg-slate-900 border border-slate-700 text-slate-300">${division}</span>` : ''}
 							</div>
 						</div>
@@ -421,7 +457,7 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 							<div class="flex items-baseline justify-center gap-2 leading-none font-sans">
 								<span class="text-sm font-black italic leading-none tabular-nums text-emerald-400">${winrateNum}%</span>
 								<span class="text-[11px] font-bold leading-none tabular-nums">
-									<span class="text-emerald-400">${acc.wins}V</span><span class="text-white/25"> · </span><span class="text-rose-400">${acc.losses}D</span>
+									<span class="text-emerald-400">${stats.wins}V</span><span class="text-white/25"> · </span><span class="text-rose-400">${stats.losses}D</span>
 								</span>
 							</div>
 							<div class="mt-1.5 h-[6px] w-full" style="transform: skewX(-16deg);">
@@ -639,6 +675,8 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 		
 		if (!btnHistorial || !btnStats || !contentDiv) return;
 
+		const cacheKey = `${id}-${getQueueId()}`;
+
 		// Estilos de activo/inactivo
 		const activeClass = 'bg-[#E9FF1F] text-black shadow-[0_0_10px_rgba(233,255,31,0.2)]'.split(' ');
 		const inactiveClass = 'text-white/70 hover:text-white'.split(' ');
@@ -649,7 +687,7 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 			btnStats.classList.add(...inactiveClass);
 			btnStats.classList.remove(...activeClass);
 
-			const data = matchesCache.get(id);
+			const data = matchesCache.get(cacheKey);
 			if (data && data.matches) {
 				contentDiv.innerHTML = `<div class="w-full space-y-1.5">${data.matches.map(m => generateMatchRow(m)).join('')}</div>`;
 			}
@@ -659,7 +697,7 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 			btnHistorial.classList.add(...inactiveClass);
 			btnHistorial.classList.remove(...activeClass);
 
-			const data = matchesCache.get(id);
+			const data = matchesCache.get(cacheKey);
 			if (data && data.matches && data.matches.length > 0) {
 				// Calcular estadísticas resumidas
 				let totalKills = 0, totalDeaths = 0, totalAssists = 0;
@@ -733,6 +771,13 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 			}
 
 			const contentDiv = document.getElementById(`history-content-${id}`);
+			const queueId = getQueueId();
+			const cacheKey = `${id}-${queueId}`;
+			// Si ya se cargó el historial de esta cuenta pero para la OTRA cola
+			// (ej. veniamos de Solo/Duo y cambiamos a Flex), hay que re-pedirlo.
+			if (contentDiv && contentDiv.dataset.loadedQueue !== queueId) {
+				delete contentDiv.dataset.loaded;
+			}
 			if (contentDiv && !contentDiv.dataset.loaded) {
 				if (!puuid) {
 					contentDiv.innerHTML = `<div class="text-center py-6 text-slate-500 font-semibold">El PUUID no está disponible. Espera el auto-refresh o re-importa la cuenta.</div>`;
@@ -749,17 +794,18 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 				try {
 					const storedKey = localStorage.getItem('riot_api_key_v1') || '';
 					const apiKeyParam = storedKey ? `&apiKey=${storedKey}` : '';
-					const res = await fetch(`/api/matches?puuid=${puuid}&region=${region}${apiKeyParam}`);
+					const res = await fetch(`/api/matches?puuid=${puuid}&region=${region}&queue=${queueId}${apiKeyParam}`);
 					const data = await res.json();
 					if (data.success && data.matches.length > 0) {
-						matchesCache.set(id, data); // Guardar en caché
+						matchesCache.set(cacheKey, data); // Guardar en caché
 						contentDiv.innerHTML = `<div class="w-full space-y-1.5">${data.matches.map(m => generateMatchRow(m)).join('')}</div>`;
 						contentDiv.dataset.loaded = 'true';
-						
+						contentDiv.dataset.loadedQueue = queueId;
+
 						// Reset tab to historial
 						(window as any).switchTab(id, 'historial');
 					} else {
-						contentDiv.innerHTML = `<div class="text-center py-6 text-slate-500 font-semibold">${data.error || 'No se encontraron partidas recientes.'}</div>`;
+						contentDiv.innerHTML = `<div class="text-center py-6 text-slate-500 font-semibold">${data.error || 'No se encontraron partidas recientes en esta cola.'}</div>`;
 					}
 				} catch (e) {
 					contentDiv.innerHTML = `<div class="text-center py-6 text-rose-400 font-semibold">Error al cargar historial. Intenta nuevamente más tarde.</div>`;
@@ -795,7 +841,12 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 					if (acc.lp !== data.lp && data.lp !== undefined) { acc.lp = data.lp; changed = true; }
 					if (acc.wins !== data.wins && data.wins !== undefined) { acc.wins = data.wins; changed = true; }
 					if (acc.losses !== data.losses && data.losses !== undefined) { acc.losses = data.losses; changed = true; }
-					
+
+					if (acc.flexRank !== data.flexTier && data.flexTier) { acc.flexRank = data.flexTier; changed = true; }
+					if (acc.flexLp !== data.flexLp && data.flexLp !== undefined) { acc.flexLp = data.flexLp; changed = true; }
+					if (acc.flexWins !== data.flexWins && data.flexWins !== undefined) { acc.flexWins = data.flexWins; changed = true; }
+					if (acc.flexLosses !== data.flexLosses && data.flexLosses !== undefined) { acc.flexLosses = data.flexLosses; changed = true; }
+
 					if (data.puuid && acc.puuid !== data.puuid) {
 						acc.puuid = data.puuid;
 						changed = true;
@@ -859,6 +910,24 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 			currentRole = (btn as HTMLElement).dataset.role || 'all';
 			render();
 		});
+	});
+
+	// Pestañas de Cola: Solo/Duo vs Flex
+	const tabQueueSolo = document.getElementById('tab-queue-solo');
+	const tabQueueFlex = document.getElementById('tab-queue-flex');
+
+	tabQueueSolo?.addEventListener('click', () => {
+		currentQueue = 'solo';
+		tabQueueSolo.className = 'px-3.5 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all';
+		tabQueueFlex.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all';
+		render();
+	});
+
+	tabQueueFlex?.addEventListener('click', () => {
+		currentQueue = 'flex';
+		tabQueueFlex.className = 'px-3.5 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all';
+		tabQueueSolo.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all';
+		render();
 	});
 
 	// Filtros de Pestaña High/Low Elo
@@ -942,6 +1011,10 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 			lp: fetchedData.lp ?? 0,
 			wins: fetchedData.wins ?? 0,
 			losses: fetchedData.losses ?? 0,
+			flexRank: fetchedData.flexTier || 'UNRANKED',
+			flexLp: fetchedData.flexLp ?? 0,
+			flexWins: fetchedData.flexWins ?? 0,
+			flexLosses: fetchedData.flexLosses ?? 0,
 			posDelta: '▲1',
 			avgGain: 28,
 			avgLoss: 14,
