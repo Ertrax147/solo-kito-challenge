@@ -1,4 +1,5 @@
 ---
+const isKitoPage = Astro.url.pathname.startsWith('/kito');
 ---
 
 <header class="border-b border-slate-800/80 bg-[#090d16]/90 backdrop-blur-xl sticky top-0 z-40">
@@ -28,7 +29,17 @@
 			</div>
 
 			<!-- Configuración de Riot API Key -->
-			<div class="flex items-center">
+			<div class="flex items-center gap-2">
+				<!-- Acceso discreto a /kito (cuentas personales) -->
+				<a
+					href={isKitoPage ? '/' : '/kito'}
+					class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-bold px-3 py-2.5 rounded-xl flex items-center gap-1.5 transition-all shadow-lg"
+					title={isKitoPage ? 'Volver al ranking principal' : 'Mis cuentas personales (Kito)'}
+				>
+					<span>👑</span>
+					<span class="hidden sm:inline">{isKitoPage ? 'Ranking Principal' : 'Mis Cuentas'}</span>
+				</a>
+
 				<!-- Botón de configuración de Riot API Key -->
 				<button id="open-key-modal-btn" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-bold px-3 py-2.5 rounded-xl flex items-center gap-1.5 transition-all shadow-lg" title="Configurar clave oficial de Riot API">
 					<span>🔑</span>
