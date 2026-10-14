@@ -10,91 +10,87 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 	<!-- Podio Top 3 (estilo SoloQChallenge.gg) -->
 	<div id="podium-container" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"></div>
 
-	<!-- Barra Superior de Filtros de Navegación -->
-	<div class="flex flex-col gap-3 mb-6 bg-[#0e1017] p-3 rounded-2xl border border-slate-800/80">
-
-		<!-- Pestañas de Categoría y Búsqueda -->
-		<div class="flex flex-wrap items-center gap-2 w-full">
-			<!-- Pestañas de Cola: Solo/Duo vs Flex -->
-			<div class="flex items-center bg-[#151822] p-1 rounded-xl border border-slate-800">
-				<button id="tab-queue-solo" class="px-3.5 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all">
-					SOLO/DUO
-				</button>
-				<button id="tab-queue-flex" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all">
-					FLEX
-				</button>
-			</div>
-
-			<!-- Pestañas High/Low Elo -->
-			<div class="flex items-center bg-[#151822] p-1 rounded-xl border border-slate-800">
-				<button id="tab-todos" class="px-3.5 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all">
-					TODOS
-				</button>
-				<button id="tab-high" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all">
-					HIGH ELO
-				</button>
-				<button id="tab-low" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all">
-					LOW ELO
-				</button>
-			</div>
-
-			<!-- Barra de Búsqueda -->
-			<div class="relative flex-1 sm:w-60">
-				<input 
-					type="text" 
-					id="search-player"
-					placeholder="Buscar jugador..."
-					class="w-full bg-[#151822] border border-slate-800 focus:border-[#E9FF1F] rounded-xl px-3.5 py-2 pl-9 text-xs text-white outline-none transition-all placeholder:text-slate-500 font-semibold"
-				/>
-				<svg class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-				</svg>
-			</div>
-
-			<!-- Filtros de Estado Rápidos -->
-			<button id="filter-live" class="px-3 py-1.5 rounded-xl bg-[#151822] border border-slate-800 text-xs font-bold text-slate-300 hover:text-emerald-400 flex items-center gap-1.5">
-				<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-				LIVE
+	<!-- Barra Superior de Filtros de Navegación: un solo flex-wrap, para que
+	     use una sola línea cuando entra y solo baje lo que no quepa, en vez
+	     de forzar dos filas fijas (eso tapaba el botón LIVE en anchos
+	     intermedios, y desperdiciaba espacio en pantallas anchas). -->
+	<div class="flex flex-wrap items-center gap-1.5 mb-6 bg-[#0e1017] p-3 rounded-2xl border border-slate-800/80">
+		<!-- Pestañas de Cola: Solo/Duo vs Flex -->
+		<div class="flex items-center shrink-0 bg-[#151822] p-1 rounded-xl border border-slate-800">
+			<button id="tab-queue-solo" class="px-3.5 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all">
+				SOLO/DUO
+			</button>
+			<button id="tab-queue-flex" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all">
+				FLEX
 			</button>
 		</div>
 
-		<!-- Barra de Filtros de Roles -->
-		<div class="flex flex-wrap items-center gap-2 w-full justify-between">
-			<div class="flex items-center gap-1 shrink-0 bg-[#151822] p-1 rounded-xl border border-slate-800" id="role-buttons-container">
-				<button data-role="all" class="role-btn shrink-0 px-3 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all">
-					TODOS
-				</button>
-				<button data-role="TOP" class="role-btn shrink-0 p-2 rounded-lg transition-all" title="TOP">
-					<img src="/roles/top.webp" class="w-5 h-5 shrink-0 object-contain opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Top" />
-				</button>
-				<button data-role="JG" class="role-btn shrink-0 p-2 rounded-lg transition-all" title="JUNGLE">
-					<img src="/roles/jungla.webp" class="w-5 h-5 shrink-0 object-contain opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Jungla" />
-				</button>
-				<button data-role="MID" class="role-btn shrink-0 p-2 rounded-lg transition-all" title="MID">
-					<img src="/roles/mid.webp" class="w-5 h-5 shrink-0 object-contain opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Mid" />
-				</button>
-				<button data-role="ADC" class="role-btn shrink-0 p-2 rounded-lg transition-all" title="ADC">
-					<img src="/roles/adc.webp" class="w-5 h-5 shrink-0 object-contain opacity-50 hover:opacity-100 transition-all filter-role-img" alt="ADC" />
-				</button>
-				<button data-role="SUP" class="role-btn shrink-0 p-2 rounded-lg transition-all" title="SUP">
-					<img src="/roles/soporte.webp" class="w-5 h-5 shrink-0 object-contain opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Soporte" />
-				</button>
-			</div>
+		<!-- Pestañas High/Low Elo -->
+		<div class="flex items-center shrink-0 bg-[#151822] p-1 rounded-xl border border-slate-800">
+			<button id="tab-todos" class="px-3.5 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all">
+				TODOS
+			</button>
+			<button id="tab-high" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all">
+				HIGH ELO
+			</button>
+			<button id="tab-low" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all">
+				LOW ELO
+			</button>
+		</div>
 
-			<!-- Botones de Acción -->
-			<div class="flex items-center gap-2 shrink-0">
-				<input type="file" id="import-file" accept=".json" class="hidden" />
-				<button id="export-btn" class="p-2.5 rounded-xl bg-[#151822] text-slate-400 border border-slate-800 hover:text-[#E9FF1F] hover:border-[#E9FF1F]/50 hover:bg-[#E9FF1F]/10 transition-all" title="Exportar Cuentas">
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-				</button>
-				<button id="import-btn" class="p-2.5 rounded-xl bg-[#151822] text-slate-400 border border-slate-800 hover:text-[#E9FF1F] hover:border-[#E9FF1F]/50 hover:bg-[#E9FF1F]/10 transition-all" title="Importar Cuentas">
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-				</button>
-				<button id="open-add-modal-btn" class="flex items-center gap-1.5 bg-[#E9FF1F] text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl hover:brightness-110 transition-all shadow-md shadow-yellow-500/10">
-					<span class="text-sm">+</span>
-					<span>Agregar Cuenta</span>
-				</button>
-			</div>
+		<!-- Barra de Búsqueda -->
+		<div class="relative w-32 sm:w-40">
+			<input
+				type="text"
+				id="search-player"
+				placeholder="Buscar jugador..."
+				class="w-full bg-[#151822] border border-slate-800 focus:border-[#E9FF1F] rounded-xl px-3.5 py-2 pl-9 text-xs text-white outline-none transition-all placeholder:text-slate-500 font-semibold"
+			/>
+			<svg class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+			</svg>
+		</div>
+
+		<!-- Filtros de Estado Rápidos -->
+		<button id="filter-live" class="shrink-0 px-3 py-1.5 rounded-xl bg-[#151822] border border-slate-800 text-xs font-bold text-slate-300 hover:text-emerald-400 flex items-center gap-1.5">
+			<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+			LIVE
+		</button>
+
+		<div class="flex items-center gap-1 shrink-0 bg-[#151822] p-1 rounded-xl border border-slate-800" id="role-buttons-container">
+			<button data-role="all" class="role-btn shrink-0 px-3 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all">
+				TODOS
+			</button>
+			<button data-role="TOP" class="role-btn shrink-0 p-2 rounded-lg transition-all" title="TOP">
+				<img src="/roles/top.webp" class="w-5 h-5 shrink-0 object-contain opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Top" />
+			</button>
+			<button data-role="JG" class="role-btn shrink-0 p-2 rounded-lg transition-all" title="JUNGLE">
+				<img src="/roles/jungla.webp" class="w-5 h-5 shrink-0 object-contain opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Jungla" />
+			</button>
+			<button data-role="MID" class="role-btn shrink-0 p-2 rounded-lg transition-all" title="MID">
+				<img src="/roles/mid.webp" class="w-5 h-5 shrink-0 object-contain opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Mid" />
+			</button>
+			<button data-role="ADC" class="role-btn shrink-0 p-2 rounded-lg transition-all" title="ADC">
+				<img src="/roles/adc.webp" class="w-5 h-5 shrink-0 object-contain opacity-50 hover:opacity-100 transition-all filter-role-img" alt="ADC" />
+			</button>
+			<button data-role="SUP" class="role-btn shrink-0 p-2 rounded-lg transition-all" title="SUP">
+				<img src="/roles/soporte.webp" class="w-5 h-5 shrink-0 object-contain opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Soporte" />
+			</button>
+		</div>
+
+		<!-- Botones de Acción -->
+		<div class="flex items-center gap-2 shrink-0">
+			<input type="file" id="import-file" accept=".json" class="hidden" />
+			<button id="export-btn" class="p-2 rounded-xl bg-[#151822] text-slate-400 border border-slate-800 hover:text-[#E9FF1F] hover:border-[#E9FF1F]/50 hover:bg-[#E9FF1F]/10 transition-all" title="Exportar Cuentas">
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+			</button>
+			<button id="import-btn" class="p-2 rounded-xl bg-[#151822] text-slate-400 border border-slate-800 hover:text-[#E9FF1F] hover:border-[#E9FF1F]/50 hover:bg-[#E9FF1F]/10 transition-all" title="Importar Cuentas">
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+			</button>
+			<button id="open-add-modal-btn" class="flex items-center gap-1.5 bg-[#E9FF1F] text-slate-950 font-black text-xs px-3 py-2 rounded-xl hover:brightness-110 transition-all shadow-md shadow-yellow-500/10">
+				<span class="text-sm">+</span>
+				<span>Agregar Cuenta</span>
+			</button>
 		</div>
 	</div>
 
