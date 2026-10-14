@@ -60,24 +60,24 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 
 		<!-- Barra de Filtros de Roles -->
 		<div class="flex items-center gap-2 w-full lg:w-auto justify-between lg:justify-end">
-			<div class="flex items-center gap-1 bg-[#151822] p-1 rounded-xl border border-slate-800" id="role-buttons-container">
-				<button data-role="all" class="role-btn px-3 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all">
+			<div class="flex items-center gap-1 shrink-0 bg-[#151822] p-1 rounded-xl border border-slate-800" id="role-buttons-container">
+				<button data-role="all" class="role-btn shrink-0 px-3 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all">
 					TODOS
 				</button>
-				<button data-role="TOP" class="role-btn p-2 rounded-lg transition-all" title="TOP">
-					<img src="/roles/top.webp" class="w-5 h-5 opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Top" />
+				<button data-role="TOP" class="role-btn shrink-0 p-2 rounded-lg transition-all" title="TOP">
+					<img src="/roles/top.webp" class="w-5 h-5 shrink-0 object-contain opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Top" />
 				</button>
-				<button data-role="JG" class="role-btn p-2 rounded-lg transition-all" title="JUNGLE">
-					<img src="/roles/jungla.webp" class="w-5 h-5 opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Jungla" />
+				<button data-role="JG" class="role-btn shrink-0 p-2 rounded-lg transition-all" title="JUNGLE">
+					<img src="/roles/jungla.webp" class="w-5 h-5 shrink-0 object-contain opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Jungla" />
 				</button>
-				<button data-role="MID" class="role-btn p-2 rounded-lg transition-all" title="MID">
-					<img src="/roles/mid.webp" class="w-5 h-5 opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Mid" />
+				<button data-role="MID" class="role-btn shrink-0 p-2 rounded-lg transition-all" title="MID">
+					<img src="/roles/mid.webp" class="w-5 h-5 shrink-0 object-contain opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Mid" />
 				</button>
-				<button data-role="ADC" class="role-btn p-2 rounded-lg transition-all" title="ADC">
-					<img src="/roles/adc.webp" class="w-5 h-5 opacity-50 hover:opacity-100 transition-all filter-role-img" alt="ADC" />
+				<button data-role="ADC" class="role-btn shrink-0 p-2 rounded-lg transition-all" title="ADC">
+					<img src="/roles/adc.webp" class="w-5 h-5 shrink-0 object-contain opacity-50 hover:opacity-100 transition-all filter-role-img" alt="ADC" />
 				</button>
-				<button data-role="SUP" class="role-btn p-2 rounded-lg transition-all" title="SUP">
-					<img src="/roles/soporte.webp" class="w-5 h-5 opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Soporte" />
+				<button data-role="SUP" class="role-btn shrink-0 p-2 rounded-lg transition-all" title="SUP">
+					<img src="/roles/soporte.webp" class="w-5 h-5 shrink-0 object-contain opacity-50 hover:opacity-100 transition-all filter-role-img" alt="Soporte" />
 				</button>
 			</div>
 
@@ -393,7 +393,7 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 		else if (role === 'ADC' || role === 'BOTTOM') imgName = 'adc.webp';
 		else if (role === 'SUP' || role === 'SUPPORT') imgName = 'soporte.webp';
 		
-		return `<img src="/roles/${imgName}" class="w-[22px] h-[22px] mx-auto opacity-70 hover:opacity-100 transition-opacity" alt="${role}" title="${role}" />`;
+		return `<img src="/roles/${imgName}" class="w-[22px] h-[22px] object-contain mx-auto opacity-70 hover:opacity-100 transition-opacity" alt="${role}" title="${role}" />`;
 	}
 
 	// Tarjetas grandes del Top 3 (estilo podio de SoloQChallenge.gg), con el
@@ -974,7 +974,7 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 	document.querySelectorAll('.role-btn').forEach(btn => {
 		btn.addEventListener('click', () => {
 			document.querySelectorAll('.role-btn').forEach(b => {
-				b.className = 'role-btn p-2 rounded-lg transition-all hover:bg-white/5';
+				b.className = 'role-btn shrink-0 p-2 rounded-lg transition-all hover:bg-white/5';
 				const img = b.querySelector('img');
 				if (img) {
 					img.classList.remove('opacity-100', 'brightness-0');
@@ -982,7 +982,7 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 				}
 			});
 			
-			btn.className = 'role-btn px-3 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all flex items-center justify-center';
+			btn.className = 'role-btn shrink-0 px-3 py-1.5 rounded-lg text-xs font-black text-slate-950 bg-[#E9FF1F] transition-all flex items-center justify-center';
 			const img = btn.querySelector('img');
 			if (img) {
 				img.classList.remove('opacity-50');
