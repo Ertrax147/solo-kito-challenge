@@ -6,7 +6,10 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 ---
 
 <section class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-6" id="leaderboard-section" data-api-url={apiUrl}>
-	
+
+	<!-- Podio Top 3 (estilo SoloQChallenge.gg) -->
+	<div id="podium-container" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"></div>
+
 	<!-- Barra Superior de Filtros de Navegación -->
 	<div class="flex flex-col lg:flex-row items-center justify-between gap-4 mb-6 bg-[#0e1017] p-3 rounded-2xl border border-slate-800/80">
 		
@@ -330,6 +333,17 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 		return baseScore + divScore + stats.lp;
 	}
 
+	// Versión grande del ícono de medalla/corona, para el podio Top 3.
+	// Reutiliza los mismos colores/paths que getPositionDisplay() usa en la tabla.
+	function getMedalIconSvg(num) {
+		if (num === 1) {
+			return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="height: 30px; width: 30px; color: rgb(244, 244, 39); filter: drop-shadow(rgba(244, 244, 39, 0.85) 0px 0px 8px);"><path d="M3 8.5 6.6 12 12 4.5 17.4 12 21 8.5V18a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18V8.5Z"></path></svg>`;
+		} else if (num === 2) {
+			return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="height: 30px; width: 30px; color: rgb(192, 192, 192); filter: drop-shadow(rgba(192, 192, 192, 0.85) 0px 0px 8px);"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8Z"></path><text x="12" y="16.5" font-size="12.5" font-weight="900" font-family="Montserrat, sans-serif" fill="#000" text-anchor="middle">2</text></svg>`;
+		}
+		return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="height: 30px; width: 30px; color: rgb(205, 127, 50); filter: drop-shadow(rgba(205, 127, 50, 0.85) 0px 0px 8px);"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8Z"></path><text x="12" y="16.5" font-size="12.5" font-weight="900" font-family="Montserrat, sans-serif" fill="#000" text-anchor="middle">3</text></svg>`;
+	}
+
 	function getPositionDisplay(posIndex, delta) {
 		const num = posIndex + 1;
 		let iconSvg = '';
@@ -380,6 +394,62 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 		else if (role === 'SUP' || role === 'SUPPORT') imgName = 'soporte.webp';
 		
 		return `<img src="/roles/${imgName}" class="w-[22px] h-[22px] mx-auto opacity-70 hover:opacity-100 transition-opacity" alt="${role}" title="${role}" />`;
+	}
+
+	// Tarjetas grandes del Top 3 (estilo podio de SoloQChallenge.gg), con el
+	// #1/#2/#3 global de la cola activa, sin importar los filtros de rol/
+	// búsqueda/elo de la tabla de abajo.
+	const podiumContainer = document.getElementById('podium-container');
+	const PODIUM_BORDER = {
+		1: 'border-[#E9FF1F]/40 bg-gradient-to-br from-yellow-500/10 via-transparent to-transparent',
+		2: 'border-slate-400/30',
+		3: 'border-amber-700/30'
+	};
+
+	function renderPodium() {
+		if (!podiumContainer) return;
+
+		const top3 = [...accounts].sort((a, b) => getEloScore(b) - getEloScore(a)).slice(0, 3);
+
+		podiumContainer.innerHTML = top3.map((acc, idx) => {
+			const num = idx + 1;
+			const stats = getQueueStats(acc);
+			const total = stats.wins + stats.losses;
+			const winrateNum = total > 0 ? Math.round((stats.wins / total) * 100) : 0;
+			const emblemUrl = getRankEmblemUrl(stats.rank);
+			const avatar = acc.profileIconUrl || FALLBACK_ICON;
+
+			return `
+				<div class="glass-panel rounded-2xl p-5 border ${PODIUM_BORDER[num]} relative overflow-hidden">
+					<div class="flex items-center gap-3 mb-4">
+						${getMedalIconSvg(num)}
+						<img src="${avatar}" onerror="this.onerror=null; this.src='${FALLBACK_ICON}'" class="w-12 h-12 rounded-xl border border-slate-700 object-cover shrink-0 aspect-square" />
+						<div class="min-w-0 flex-1">
+							<div class="font-display font-bold text-white text-sm truncate">${acc.name}</div>
+							<div class="text-[11px] text-slate-500 font-semibold truncate">${acc.name}${acc.tag}</div>
+						</div>
+						<div class="shrink-0">${getRoleSvg(acc.role)}</div>
+					</div>
+
+					<div class="flex items-center gap-2 mb-3">
+						<img src="${emblemUrl}" onerror="this.onerror=null; this.src='${UNRANKED_EMBLEM}';" loading="lazy" class="w-10 h-10 object-contain drop-shadow-md shrink-0" alt="${stats.rank}" />
+						<div class="font-display font-black text-3xl text-white leading-none">${stats.lp}<span class="text-sm text-slate-400 font-bold ml-1">LP</span></div>
+					</div>
+
+					<div class="flex items-center justify-between text-[11px] text-slate-400 font-bold mb-1.5">
+						<span>${stats.wins}V ${stats.losses}D</span>
+						<span>${total} partidas</span>
+					</div>
+					<div class="flex items-center justify-between text-xs font-black text-emerald-400 mb-1.5">
+						<span>${winrateNum}%</span>
+						<span class="text-slate-500 font-semibold">Winrate</span>
+					</div>
+					<div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+						<div class="h-full bg-[#E9FF1F]" style="width: ${winrateNum}%;"></div>
+					</div>
+				</div>
+			`;
+		}).join('');
 	}
 
 	function render() {
@@ -535,6 +605,8 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 				</tr>
 			`;
 		}).join('');
+
+		renderPodium();
 
 		// Despachar evento personalizado para notificar al padre sobre las cuentas actuales
 		window.dispatchEvent(new CustomEvent('accountsLoaded', { detail: accounts }));
