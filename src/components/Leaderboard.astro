@@ -400,11 +400,6 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 	// #1/#2/#3 global de la cola activa, sin importar los filtros de rol/
 	// búsqueda/elo de la tabla de abajo.
 	const podiumContainer = document.getElementById('podium-container');
-	const PODIUM_BORDER = {
-		1: 'border-[#E9FF1F]/40 bg-gradient-to-br from-yellow-500/10 via-transparent to-transparent',
-		2: 'border-slate-400/30',
-		3: 'border-amber-700/30'
-	};
 
 	function renderPodium() {
 		if (!podiumContainer) return;
@@ -420,32 +415,47 @@ const { apiUrl = '/api/accounts' } = Astro.props;
 			const avatar = acc.profileIconUrl || FALLBACK_ICON;
 
 			return `
-				<div class="glass-panel rounded-2xl p-5 border ${PODIUM_BORDER[num]} relative overflow-hidden">
-					<div class="flex items-center gap-3 mb-4">
-						${getMedalIconSvg(num)}
-						<img src="${avatar}" onerror="this.onerror=null; this.src='${FALLBACK_ICON}'" class="w-12 h-12 rounded-xl border border-slate-700 object-cover shrink-0 aspect-square" />
-						<div class="min-w-0 flex-1">
-							<div class="font-display font-bold text-white text-sm truncate">${acc.name}</div>
-							<div class="text-[11px] text-slate-500 font-semibold truncate">${acc.name}${acc.tag}</div>
+				<div class="relative overflow-hidden rounded-[14px] border border-[#E9FF1F]/25 bg-black/20 transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-[2px] hover:border-[#E9FF1F]/45">
+					<div class="relative p-6">
+						<div class="flex items-start justify-between gap-4">
+							<div class="flex min-w-0 items-start gap-4">
+								<span class="inline-flex items-center justify-center">${getMedalIconSvg(num)}</span>
+								<div class="flex min-w-0 items-center gap-3">
+									<div class="h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-white/5 ring-1 ring-white/10">
+										<img src="${avatar}" onerror="this.onerror=null; this.src='${FALLBACK_ICON}'" alt="" class="h-full w-full object-cover" />
+									</div>
+									<div class="min-w-0">
+										<p class="truncate text-[18px] font-semibold text-white">${acc.name}</p>
+										<p class="truncate text-[13px] text-white/60">${acc.name}${acc.tag}</p>
+									</div>
+								</div>
+							</div>
+							<div class="h-8 w-8 shrink-0 overflow-hidden">${getRoleSvg(acc.role)}</div>
 						</div>
-						<div class="shrink-0">${getRoleSvg(acc.role)}</div>
-					</div>
 
-					<div class="flex items-center gap-2 mb-3">
-						<img src="${emblemUrl}" onerror="this.onerror=null; this.src='${UNRANKED_EMBLEM}';" loading="lazy" class="w-10 h-10 object-contain drop-shadow-md shrink-0" alt="${stats.rank}" />
-						<div class="font-display font-black text-3xl text-white leading-none">${stats.lp}<span class="text-sm text-slate-400 font-bold ml-1">LP</span></div>
-					</div>
+						<div class="mt-8 flex w-full items-center justify-center gap-5">
+							<div class="relative grid h-20 w-20 place-items-center">
+								<img src="${emblemUrl}" onerror="this.onerror=null; this.src='${UNRANKED_EMBLEM}';" loading="lazy" class="h-16 w-16 object-contain" alt="${stats.rank}" />
+							</div>
+							<div class="flex items-baseline gap-3">
+								<span class="text-[56px] font-semibold tracking-tight text-white leading-none">${stats.lp}</span>
+								<span class="text-[26px] font-semibold text-white/60">LP</span>
+							</div>
+						</div>
 
-					<div class="flex items-center justify-between text-[11px] text-slate-400 font-bold mb-1.5">
-						<span>${stats.wins}V ${stats.losses}D</span>
-						<span>${total} partidas</span>
-					</div>
-					<div class="flex items-center justify-between text-xs font-black text-emerald-400 mb-1.5">
-						<span>${winrateNum}%</span>
-						<span class="text-slate-500 font-semibold">Winrate</span>
-					</div>
-					<div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
-						<div class="h-full bg-[#E9FF1F]" style="width: ${winrateNum}%;"></div>
+						<div class="mt-10 flex items-end justify-between gap-6">
+							<div class="flex gap-8">
+								<div>
+									<p class="text-[12px] font-semibold text-white">${stats.wins}V ${stats.losses}D</p>
+									<p class="mt-1 text-[10px] text-white/70">${total} partidas</p>
+								</div>
+								<div>
+									<p class="text-[12px] font-semibold text-white">${winrateNum}%</p>
+									<p class="mt-1 text-[10px] text-white/70">Winrate</p>
+								</div>
+							</div>
+						</div>
+						<div class="mt-4 h-[3px] rounded-full bg-[#E9FF1F]" style="width: ${winrateNum}%;"></div>
 					</div>
 				</div>
 			`;
